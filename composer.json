@@ -1,25 +1,32 @@
 {
-    "name": "sunhill-de/framework",
-    "autoload": {
-        "psr-4": {
-            "sunhill\\framework\\": "src/",
-            "sunhhil\\framework\\tests": "tests/"
-        }
-    },
-    "authors": [
-     {
-         "name": "Klaus Dimde",
-         "email": "klaus@dimde.info"
-     }
-     ],
-     "minimum-stability" : "dev",
-     "require" : {
-                "laravel/framework" : "^10.0",
-                "sunhill/basic": "*"
-     },
-     "require-dev" : {
-                "phpunit/phpunit" : "^10.0",
-                "orchestra/testbench" : "^8.5"
-     }
- }
-     
+	"name" : "sunhill/framework",
+	"autoload" : {
+		"psr-4" : {
+			"Sunhill\\Framework\\" : "src/",
+			"Sunhhil\\Framework\\Tests\\" : "tests/"
+		}
+	},
+	"authors" : [{
+			"name" : "Klaus Dimde",
+			"email" : "klaus@dimde.info"
+		}
+	],
+	"minimum-stability" : "dev",
+	"require" : {
+		"laravel/framework" : "^10.0",
+		"sunhill/basic" : "*",
+		"isaeken/plugin-system" : "*"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "^10.0",
+		"orchestra/testbench" : "^8.5"
+	},
+	"extra" : {
+		"laravel" : {
+			"providers" : [
+				"Sunhill\\Framework\\SunhillFrameworkServiceProvider"
+			]
+		}
+	}
+
+}
