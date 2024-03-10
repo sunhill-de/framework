@@ -14,8 +14,7 @@
 	"minimum-stability" : "dev",
 	"require" : {
 		"laravel/framework" : "^10.0",
-		"sunhill/basic" : "*",
-		"isaeken/plugin-system" : "*"
+		"sunhill/basic" : "*"
 	},
 	"require-dev" : {
 		"phpunit/phpunit" : "^10.0",
