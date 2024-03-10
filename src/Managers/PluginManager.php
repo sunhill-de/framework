@@ -13,7 +13,8 @@ class PluginManager
     public function setupPlugins()
     {
         $this->plugin_system = new PluginSystem(base_path('/plugins'));
-        $this->plugin_system->autoload();
+        $this->plugin_system->autoload(nested:false);
+        $this->plugin_system->execute('boot');
     }
     
 }
