@@ -25,12 +25,19 @@
                         "options" : {
                                 "symlink" : true
                         }
+                },{
+                        "type" : "path",
+                        "url" : "../plugin-system",
+                        "options" : {
+                                "symlink" : true
+                        }
                 }                
                 ],
      "require" : {
                 "laravel/framework" : "^10.0",
                 "sunhill/basic": "*",
-                "sunhill/pm":"*"
+                "sunhill/pm":"*",
+                "isaeken/plugin-system":"*"
      },
      "require-dev" : {
                 "phpunit/phpunit" : "^10.0",
