@@ -37,6 +37,7 @@
                 "laravel/framework" : "^10.0",
                 "sunhill/basic": "*",
                 "sunhill/pm":"*",
+                "sunhill/properties": "*",
                 "isaeken/plugin-system":"*"
      },
      "require-dev" : {

@@ -4,6 +4,7 @@ namespace Sunhill\Framework\Managers;
 
 use IsaEken\PluginSystem\Interfaces\PluginInterface;
 use IsaEken\PluginSystem\PluginSystem;
+use Illuminate\Support\Facades\Config;
 
 class PluginManager 
 {
@@ -12,9 +13,9 @@ class PluginManager
     
     public function setupPlugins()
     {
-        $this->plugin_system = new PluginSystem(base_path('/plugins'));
-        $this->plugin_system->autoload(nested:false);
-        $this->plugin_system->execute('boot');
+        $this->plugin_system = new PluginSystem();
+        $this->plugin_system->load(Config::get('plugin_dir',base_path('/plugins')));
+        return $this->plugin_system->execute('boot');
     }
     
 }
