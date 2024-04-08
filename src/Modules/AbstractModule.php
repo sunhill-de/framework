@@ -55,7 +55,7 @@ class AbstractModule
      * The owning module of this module (or null if top)
      * @var AbstractModule
      */
-    protected AbstractModule $owner;
+    protected $owner;
     
     /**
      * Setter for owner
@@ -98,9 +98,9 @@ class AbstractModule
     public function getHirachy(): array
     {
         if ($this->hasOwner()) {
-            $result = [];
+            $result = $this->getOwner()->getHirachy();
         } else {
-            $result = $this->getOwner()->getHirarchy();
+            $result = [];
         }
         $result[$this->getName()] = $this;
         
