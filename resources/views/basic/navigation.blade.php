@@ -1,4 +1,4 @@
-@extends('visual::basic.hamburger')
+@extends('framework::basic.hamburger')
 
 @section('body')
 

@@ -1,4 +1,4 @@
-@extends('visual::basic.html')
+@extends('framework::basic.html')
 
 @section('body')
 <nav role='navigation'>
