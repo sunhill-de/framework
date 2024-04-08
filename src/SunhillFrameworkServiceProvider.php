@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Sunhill\Framework\Managers\PluginManager;
 use Sunhill\Framework\Facades\Plugins;
 use Sunhill\Framework\Managers\SiteManager;
+use Sunhill\Framework\Facades\Site;
 
 class SunhillFrameworkServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,7 @@ class SunhillFrameworkServiceProvider extends ServiceProvider
     {
         Plugins::setupPlugins();
         
-        $this->loadViewsFrom(__DIR__.'/../resources/views','visual');
-        
+        $this->loadViewsFrom(__DIR__.'/../resources/views','framework');
+        Site::setupRoutes();
     }
 }
