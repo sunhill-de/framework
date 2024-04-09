@@ -1,5 +1,7 @@
 <?php
 
+use Sunhill\Framework\Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case

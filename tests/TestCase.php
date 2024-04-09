@@ -1,10 +1,19 @@
 <?php
 
-namespace Tests;
+namespace Sunhill\Framework\Tests;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
+use Orchestra\Testbench\TestCase as Orchestra;
+use Sunhill\Basic\SunhillBasicServiceProvider;
+use Sunhill\Framework\SunhillFrameworkServiceProvider;
 
-abstract class TestCase extends BaseTestCase
+class TestCase extends Orchestra
 {
-    //
+    
+    protected function getPackageProviders($app)
+    {
+        return [
+            SunhillFrameworkServiceProvider::class
+        ];    
+    }
+    
 }

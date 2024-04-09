@@ -2,8 +2,7 @@
 
 use Sunhill\Framework\Modules\AbstractModule;
 
-uses(\Sunhill\Properties\Tests\TestCase::class);
-
+uses(\Sunhill\Framework\Tests\TestCase::class);
 
 test('name works', function () {
     $test = new AbstractModule();

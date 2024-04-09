@@ -26,7 +26,7 @@ class SiteManager
     
     public function get404Error()
     {
-        return view('framework::errors.error404', ['sitename'=>'Sunhill']);    
+        return view('framework::errors.error404', ['sitename'=>env('APP_NAME','Sunhill')]);    
     }
     
     public function setupRoutes()
