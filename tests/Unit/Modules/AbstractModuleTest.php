@@ -32,3 +32,4 @@ test('hirarchy works', function() {
         expect($keys)->toBe(['parent','child']);
         expect($hirarchy['parent'])->toBe($parent);
 });
+

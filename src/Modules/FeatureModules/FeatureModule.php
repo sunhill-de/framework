@@ -17,6 +17,8 @@ use Sunhill\Framework\Response\AbstractResponse;
 use Sunhill\Framework\Traits\NameAndDescription;
 use Sunhill\Framework\Modules\AbstractModule;
 use Sunhill\Framework\Modules\Exceptions\CantProcessModuleException;
+use Sunhill\Framework\Traits\Children;
+use Sunhill\Framework\Modules\Exceptions\CantProcessResponseException;
 
 /**
  * This class is a base class for a feature modules. A feature module is a collection of logical
@@ -28,30 +30,42 @@ use Sunhill\Framework\Modules\Exceptions\CantProcessModuleException;
 class FeatureModule extends AbstractModule
 {
    
-    protected function doAddSubmodule(FeatureModule $module)
+    use Children;
+    
+    protected function doAddSubmodule($module, string $name)
     {
-        
+        $this->addChild($module, $name);
     }
     
-    public function addSubmodule($module, ?callable $callback = null): FeatureModule
+    public function addSubmodule($module, string $name = '', ?callable $callback = null): FeatureModule
     {
-        if (is_a($module, FeatureModule::class)) {
-            $this->doAddSubmodule($module);
-        } else if (is_string($module) && class_exists($mdoule)) {
+        if (is_string($module) && class_exists($module)) {
             $module = new $module();
-            $this->doAddSubmodule($module);
+        }
+        if (is_a($module, FeatureModule::class)) {
+            $this->doAddSubmodule($module, $name);
         } else {
             throw new CantProcessModuleException("The passed parameter can't be processed to a module");
         }
+        
         if (!is_null($callback)) {
             $callback($module);
         }
         return $module;
     }
     
-    public function addResponse($response): AbstractResponse
+    public function addResponse($response, string $name = ''): AbstractResponse
     {
+        if (is_string($response) && class_exists($response)) {
+            $response = new $response();
+        }
+        if (is_a($response, AbstractResponse::class)) {
+            $this->doAddSubmodule($response, $name);
+        } else {
+            throw new CantProcessResponseException("The passed parameter can't be processed to a response");
+        }
         
+        return $response;        
     }
     
     public function defaultIndex(): AbstractModule
