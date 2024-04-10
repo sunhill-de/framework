@@ -11,10 +11,11 @@
  * PSR-State: complete
  */
 
-namespace Sunhill\Framework\Modules;
+namespace Sunhill\Framework\Modules\FeatureModules;
 
 use Sunhill\Framework\Response\AbstractResponse;
 use Sunhill\Framework\Traits\NameAndDescription;
+use Sunhill\Framework\Modules\AbstractModule;
 
 /**
  * This class is a base class for a feature modules. A feature module is a collection of logical
@@ -48,6 +49,12 @@ class FeatureModule extends AbstractModule
     
     public function getBreadcrumbs()
     {
-        if    
+        if ($this->hasOwner()) {
+            $result = $this->getOwner()->getBreadcrumbs();
+        } else {
+            $result = [];
+        }
+        $result[$this->getPath()] = $this->getDescription();
+        return $result;
     }
 }
