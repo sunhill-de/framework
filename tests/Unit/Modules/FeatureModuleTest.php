@@ -19,3 +19,4 @@ test('Breadcrumbs works', function() {
    expect(array_keys($breadcrumbs))->toBe(['/parent/','/parent/child/']);
    expect(array_values($breadcrumbs))->toBe(['parent module','child module']);
 });
+

@@ -16,6 +16,7 @@ namespace Sunhill\Framework\Modules\FeatureModules;
 use Sunhill\Framework\Response\AbstractResponse;
 use Sunhill\Framework\Traits\NameAndDescription;
 use Sunhill\Framework\Modules\AbstractModule;
+use Sunhill\Framework\Modules\Exceptions\CantProcessModuleException;
 
 /**
  * This class is a base class for a feature modules. A feature module is a collection of logical
@@ -26,13 +27,29 @@ use Sunhill\Framework\Modules\AbstractModule;
  */
 class FeatureModule extends AbstractModule
 {
-        
-    public function addSubmodule(FeatureModule $module, ?callable $callback = null): FeatureModule
+   
+    protected function doAddSubmodule(FeatureModule $module)
     {
         
     }
     
-    public function addResponse(AbstractResponse $response): AbstractResponse
+    public function addSubmodule($module, ?callable $callback = null): FeatureModule
+    {
+        if (is_a($module, FeatureModule::class)) {
+            $this->doAddSubmodule($module);
+        } else if (is_string($module) && class_exists($mdoule)) {
+            $module = new $module();
+            $this->doAddSubmodule($module);
+        } else {
+            throw new CantProcessModuleException("The passed parameter can't be processed to a module");
+        }
+        if (!is_null($callback)) {
+            $callback($module);
+        }
+        return $module;
+    }
+    
+    public function addResponse($response): AbstractResponse
     {
         
     }
@@ -47,6 +64,11 @@ class FeatureModule extends AbstractModule
         
     }
     
+    /**
+     * Returns the breadcrumbs array. Ths array is an associative array which keys are the link 
+     * and its values are the description of the module
+     * @return string
+     */
     public function getBreadcrumbs()
     {
         if ($this->hasOwner()) {
