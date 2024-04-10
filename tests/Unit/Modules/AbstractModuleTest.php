@@ -1,8 +1,9 @@
 <?php
 
 use Sunhill\Framework\Modules\AbstractModule;
+use Sunhill\Framework\Tests\TestCase;
 
-uses(\Sunhill\Framework\Tests\TestCase::class);
+uses(TestCase::class);
 
 test('name works', function () {
     $test = new AbstractModule();

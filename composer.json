@@ -3,7 +3,7 @@
 	"autoload" : {
 		"psr-4" : {
 			"Sunhill\\Framework\\" : "src/",
-			"Sunhhil\\Framework\\Tests\\" : "tests/"
+			"Sunhill\\Framework\\Tests\\" : "tests/"
 		}
 	},
 	"authors" : [{

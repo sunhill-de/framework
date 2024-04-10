@@ -1,8 +1,10 @@
 <?php
 
-uses(\Sunhill\Properties\Tests\TestCase::class);
+use Sunhill\Framework\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Sunhill\Framework\Managers\PluginManager;
+
+uses(\Sunhill\Framework\Tests\TestCase::class);
 
 
 test('boot', function () {
