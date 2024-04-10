@@ -58,7 +58,7 @@ test('Flush children works', function() {
         $parent->addChild('child2',$child2);
         $parent->flushChildren();
         
-        expect($parent->hasChildren)->toBe(false);
+        expect($parent->hasChildren())->toBe(false);
 });
 
 test('Delete child works', function() {
