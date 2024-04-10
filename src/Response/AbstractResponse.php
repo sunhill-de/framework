@@ -33,6 +33,32 @@ abstract class AbstractResponse
 
     use Owner;
     
+    protected $visible = false;
+    
+    public function setVisible(bool $value = true): self
+    {
+        $this->visible = $value;
+        return $this;
+    }
+    
+    public function getVisible(): bool
+    {
+        return $this->visible;
+    }
+    
+    protected $method = 'get';
+    
+    public function setMethod(string $method): self
+    {
+        $this->method = $method;
+        return $this;
+    }
+    
+    public function getMethod(): string
+    {
+        return $this->method;    
+    }
+    
     /**
      * Stores the default parameters from the framework
      * 
@@ -65,7 +91,9 @@ abstract class AbstractResponse
     public function getBreadcrumbs(): array
     {
         $result = $this->getOwner()->getBreadcrumbs();
-        $result[$this->getPath()] = $this->getName();
+        if (!empty($this->getName())) {
+            $result[$this->getPath()] = $this->getName();
+        }
         return $result;
     }
     

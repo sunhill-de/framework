@@ -68,14 +68,15 @@ class FeatureModule extends AbstractModule
         return $response;        
     }
     
-    public function defaultIndex(): AbstractModule
+    public function defaultIndex(): AbstractResponse
     {
         
     }
     
-    public function addIndex(AbstractResponse $response): AbstractModule
+    public function addIndex(AbstractResponse $response): AbstractResponse
     {
-        
+        $response->setName('')->setVisible(false)->addRoute($this->getName().'.index');
+        return $this->addResponse($response);
     }
     
     /**

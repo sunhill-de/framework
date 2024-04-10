@@ -64,6 +64,9 @@ trait Owner
     public function getPath(): string
     {
         if ($this->hasOwner()) {
+            if (empty($this->getName())) {
+                return $this->getOwner()->getPath();
+            }
             return $this->getOwner()->getPath().$this->getName().'/';
         } 
         return '/'.$this->getName().'/';
