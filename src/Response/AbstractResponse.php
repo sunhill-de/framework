@@ -13,6 +13,9 @@
 
 namespace Sunhill\Framework\Response;
 
+use Sunhill\Framework\Modules\FeatureModule;
+use Sunhill\Framework\Traits\NameAndDescription;
+
 /**
  * A response is a way the framework can respond to a request of any kind
  * 
@@ -21,6 +24,11 @@ namespace Sunhill\Framework\Response;
  */
 abstract class AbstractResponse
 {
+    
+    /**
+     * Provides the properties name and description
+     */
+    use NameAndDescription;
     
     /**
      * Stores the default parameters from the framework
@@ -49,6 +57,41 @@ abstract class AbstractResponse
     protected function getParameters(): array
     {
         return $this->parameters;    
+    }
+    
+    /**
+     * A mandatory field that stores the owning FeatureModule
+     * 
+     * @var \Sunhill\Framework\Modules\FeatureModule
+     */
+    protected FeatureModule $owner;
+    
+    /**
+     * Setter for the Owner field
+     * 
+     * @param FeatureModule $owner
+     * @return AbstractResponse
+     */
+    public function setOwner(FeatureModule $owner): AbstractResponse
+    {
+        $this->owner = $owner;    
+    }
+    
+    /**
+     * Getter for the Owner field
+     * 
+     * @return FeatureModule
+     */
+    public function getOwner(): FeatureModule
+    {
+        return $this->owner;
+    }
+    
+    public function getBreadcrumbs(): array
+    {
+        $result = $this->getOwner()->getBreadcrumbs();
+        $result[$this->getPath()] = $this->getName();
+        return $result;
     }
     
     /**
