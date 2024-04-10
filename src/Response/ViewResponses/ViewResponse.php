@@ -14,7 +14,8 @@ abstract class ViewResponse extends AbstractResponse
         if (empty($this->template)) {
             throw new MissingTemplateException("In the view response '".static::class."' is no template defined.");
         }
-        return view($this->template, array_merge($this->getViewElements(), $this->getParameters()));
+        $params = array_merge($this->getViewElements(), $this->getParameters());
+        return view($this->template, $params);
     }
     
     abstract protected function getViewElements(): array;

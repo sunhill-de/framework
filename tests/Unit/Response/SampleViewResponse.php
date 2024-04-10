@@ -9,7 +9,7 @@ class SampleViewResponse extends ViewResponse
     
     protected function getViewElements(): array
     {
-        return ['test'=>'ABC'];    
+        return ['test'=>'abc'];    
     }
     
     public function setTemplate(string $template)

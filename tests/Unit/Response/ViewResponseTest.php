@@ -14,5 +14,6 @@ it('throws exception when no template is set', function() {
 test('Sample parsing works', function() {
     $test = new SampleViewResponse();
     $test->setTemplate('framework::test.viewresponse');
-    expect($test->getResponse())->toContain('TEST:abc');
+    $test->setParameters(['sitename'=>'test']);
+    expect($test->getResponse()->render())->toContain('TEST:abc');
 });
