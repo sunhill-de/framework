@@ -42,3 +42,14 @@ test('Get hirarchy works', function() {
     expect($keys)->toBe(['parent','child']);
     expect($hirarchy['parent'])->toBe($parent);
 });
+
+test('Get path works', function() {
+    $parent = new DummyOwnerObject();
+    $parent->name = 'parent';
+    $child = new DummyOwnerObject();
+    $child->name = 'child';
+    
+    $child->setOwner($parent);
+    
+    expect($child->getPath())->toBe('/parent/child/');
+});
