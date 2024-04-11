@@ -9,9 +9,17 @@ use Illuminate\Support\Facades\Route;
 class SiteManager 
 {
     
+    protected $main_module;
+    
     public function installMainmodule($module)
     {
-        
+        $this->main_module = $module;
+        return $module;
+    }
+    
+    public function flushMainmodule()
+    {
+        unset($this->main_module);
     }
     
     public function installSkin(SkinModule $skin)
