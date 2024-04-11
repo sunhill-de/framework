@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunhhil\Framework\Tests\Unit\Response;
+namespace Sunhhil\Framework\Tests\Responses;
 
 use Sunhill\Framework\Response\ViewResponses\ViewResponse;
 

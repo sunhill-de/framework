@@ -1,8 +1,7 @@
 <?php
 
 use Sunhill\Framework\Response\Exceptions\MissingTemplateException;
-use Sunhhil\Framework\Tests\Unit\Response\SampleViewResponse;
-use Sunhill\Framework\Tests\TestCase;
+use Sunhhil\Framework\Tests\Responses\SampleViewResponse;
 
 uses(\Sunhill\Framework\Tests\TestCase::class);
 
