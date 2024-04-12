@@ -3,6 +3,7 @@
 use Sunhill\Framework\Tests\TestCase;
 use Sunhill\Framework\Modules\FeatureModules\FeatureModule;
 use Sunhill\Framework\Response\ViewResponses\ViewResponse;
+use Sunhill\Framework\Modules\Exceptions\CantProcessResponseException;
 
 uses(TestCase::class);
 
@@ -49,7 +50,8 @@ test('addSubmodule works with classname', function() {
     expect($parent->hasChild('child'))->toBe(true);
 });
                 
-test('addSubmodule works with classname and callback', function() {
+test('addSubmodule works with classname and callback', function() 
+{
     $parent = new FeatureModule();
     $parent->setName('parent');
     $parent->addSubmodule(FeatureModule::class, 'child', function($child) {
@@ -59,7 +61,8 @@ test('addSubmodule works with classname and callback', function() {
     expect($parent->getChild('child')->hasChild('subchild'))->toBe(true);
 });
         
-test('addResponse works', function() {
+test('addResponse works', function() 
+{
     $parent = new FeatureModule();
     $parent->setName('parent');
     $response = Mockery::mock(ViewResponse::class);
@@ -69,5 +72,27 @@ test('addResponse works', function() {
     expect($parent->hasChild('testresponse'))->toBe(true);
 });        
 
+it('fails when wrong items are passed to addResponse', function($param)
+{
+   $parent = new FeatureModule();
+   $parent->setName('parent');
+   if (is_callable($param)) {
+       $param = $param();
+   }
+   $parent->addResponse($param);
+})->throws(CantProcessResponseException::class)->with(
+  [
+      'nonexisting',
+      function() { return new \StdClass(); }
+  ]);
+
+test('addIndex works', function() 
+{
         
+});
+
+test('defaultIndex works', function() 
+{
     
+});
+
