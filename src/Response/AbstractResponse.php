@@ -16,6 +16,7 @@ namespace Sunhill\Framework\Response;
 use Sunhill\Framework\Modules\FeatureModule;
 use Sunhill\Framework\Traits\NameAndDescription;
 use Sunhill\Framework\Traits\Owner;
+use Illuminate\Support\Facades\Route;
 
 /**
  * A response is a way the framework can respond to a request of any kind
@@ -118,5 +119,30 @@ abstract class AbstractResponse
     protected function getErrorResponse()
     {
         
+    }
+    
+    public function addRoute(string $alias=''): self
+    {
+        $route = $this->getPath().$this->arguments;
+        if (empty($alias)) {
+            $alias = implode('.', array_keys($this->getHirarchy()));
+        }
+        $method = $this->getMethod();
+        Route::$method($route, function(...$args) {
+            foreach ($args as $key => $value) {
+                $method = 'set_'.$key;
+                $this->$method($value);
+            }
+            return $this->getResponse();
+        })->name($alias);
+        return $this;
+    }
+    
+    protected $arguments = '';
+    
+    public function setArguments(string $arguments): self
+    {
+        $this->arguments = $arguments;
+        return $this;        
     }
 }
