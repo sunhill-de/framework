@@ -125,7 +125,8 @@ abstract class AbstractResponse
     {
         $route = $this->getPath().$this->arguments;
         if (empty($alias)) {
-            $alias = implode('.', array_keys($this->getHirarchy()));
+            $keys = $this->getHirachy();
+            $alias = implode('.', array_keys($keys));
         }
         $method = $this->getMethod();
         Route::$method($route, function(...$args) {
