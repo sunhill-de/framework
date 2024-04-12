@@ -19,6 +19,7 @@ use Sunhill\Framework\Modules\AbstractModule;
 use Sunhill\Framework\Modules\Exceptions\CantProcessModuleException;
 use Sunhill\Framework\Traits\Children;
 use Sunhill\Framework\Modules\Exceptions\CantProcessResponseException;
+use Sunhill\Framework\Response\ViewResponses\DefaultTileViewResponse;
 
 /**
  * This class is a base class for a feature modules. A feature module is a collection of logical
@@ -70,11 +71,17 @@ class FeatureModule extends AbstractModule
     
     public function defaultIndex(): AbstractResponse
     {
-        
+        return $this->addIndex(DefaultTileViewResponse::class);
     }
     
-    public function addIndex(AbstractResponse $response): AbstractResponse
+    public function addIndex($response): AbstractResponse
     {
+        if ((is_string($response) && class_exists($response))) {
+            $response = new $response();
+        }
+        if (!is_a($response, AbstractResponse::class)) {
+            throw new CantProcessResponseException("The given parameter can not be processed to a response for index");
+        }
         $response->setName('')->setVisible(false)->addRoute($this->getName().'.index');
         return $this->addResponse($response);
     }
