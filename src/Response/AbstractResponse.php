@@ -13,7 +13,6 @@
 
 namespace Sunhill\Framework\Response;
 
-use Sunhill\Framework\Modules\FeatureModule;
 use Sunhill\Framework\Traits\NameAndDescription;
 use Sunhill\Framework\Traits\Owner;
 use Illuminate\Support\Facades\Route;
@@ -124,9 +123,18 @@ abstract class AbstractResponse
     public function addRoute(string $alias=''): self
     {
         $route = $this->getPath().$this->arguments;
+        if ($route == '//') {
+            $route = '/';
+            if (empty($alias)) {
+                $alias = 'mainpage';
+            }
+        }
         if (empty($alias)) {
             $keys = $this->getHirachy();
             $alias = implode('.', array_keys($keys));
+        }
+        if (substr($route,-1) == '/') {
+            $route = substr($route,0,-1);
         }
         $method = $this->getMethod();
         Route::$method($route, function(...$args) {
@@ -134,7 +142,7 @@ abstract class AbstractResponse
                 $method = 'set_'.$key;
                 $this->$method($value);
             }
-            return $this->getResponse();
+            return $this->getResponse(); 
         })->name($alias);
         return $this;
     }

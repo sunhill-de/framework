@@ -9,6 +9,6 @@ class SampleAbstractResponse extends AbstractResponse
     
     protected function prepareResponse()
     {
-        
+        return 'ABC';
     }
 }
