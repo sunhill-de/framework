@@ -18,4 +18,9 @@ class PluginManager
         return $this->plugin_system->execute('boot');
     }
     
+    public function query()
+    {
+        
+    }
+    
 }
