@@ -3,6 +3,7 @@
 namespace Sunhill\Framework\Plugins;
 
 use Sunhill\Basic\Query\ArrayQuery;
+use IsaEken\PluginSystem\Enums\PluginState;
 
 class PluginQuery extends ArrayQuery
 {
@@ -19,5 +20,26 @@ class PluginQuery extends ArrayQuery
     protected function getRawData()
     {
         return $this->plugins;
+    }
+    
+    public function getKey($entry, $key)
+    {
+        switch ($key) {
+            case 'name':
+                return $entry->getName();
+            case 'author':
+                return $entry->getAuthor();
+            case 'version':
+                return $entry->getVersion();
+            case 'state':
+                switch ($entry->getState()) {
+                    case PluginState::Enabled:
+                        return 'enabled';
+                    case PluginState::Disabled:
+                        return 'disabled';
+                    case PluginState::Outdated:
+                        return 'outdated';
+                }
+        }
     }
 }
