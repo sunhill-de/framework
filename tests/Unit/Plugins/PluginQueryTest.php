@@ -23,6 +23,8 @@ function getModule($name, $author, $version, $features, $state)
         }
     }
     $return->shouldReceive('getState')->andReturn($state);
+    
+    return $return;
 }
 
 function getTestModules(): array
@@ -52,7 +54,7 @@ test('Query get returns all', function()
     $query = getTestQuery();
     $list = $query->get();
     expect(count($list))->toBe(4);
-    expect($list[1]->getName())->toBe('testModuleB');
+    expect($list->get(1)->getName())->toBe('testModuleB');
 });
 
 test('Query first return first', function()
@@ -67,9 +69,9 @@ test('Order works', function($order, $expect)
     expect($query->orderBy($order)->first()->getName())->toBe($expect);    
 })->with([
     ['name','And just another'],
-    ['author','testmoduleA'],
-    ['version','Another module'],
-    ['state', 'testmoduleB']    
+    ['author','testModuleB'],
+    ['version','testModuleA'],
+    ['state', 'testModuleB']    
 ]);
 
 test('where works', function($key, $relation, $value, $expect)
@@ -82,5 +84,7 @@ test('where works', function($key, $relation, $value, $expect)
     ['name','<','testmoduleB','Another module'],
     ['name','>','testmoduleA','testmoduleB'],
     ['name','begins with','testmodule','testmoduleA'],
-    
+    ['author','=','Debby Debugger','testmoduleA'],
+    ['version','=','0.1.1','testmoduleB'],
+    ['state','=','enabled','testmoduleB']    
 ]);
