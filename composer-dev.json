@@ -27,6 +27,12 @@
                         }
                 },{
                         "type" : "path",
+                        "url" : "../basic",
+                        "options" : {
+                                "symlink" : true
+                        }
+                },{
+                        "type" : "path",
                         "url" : "../plugin-system",
                         "options" : {
                                 "symlink" : true
