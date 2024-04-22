@@ -42,4 +42,11 @@ class PluginQuery extends ArrayQuery
                 }
         }
     }
+    
+    public function propertyExists($entry, $key)
+    {
+        return in_array($key, ['name','author','version','state']);
+    }
+    
+    
 }

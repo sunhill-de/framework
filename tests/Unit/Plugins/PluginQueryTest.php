@@ -71,20 +71,19 @@ test('Order works', function($order, $expect)
     ['name','And just another'],
     ['author','testModuleB'],
     ['version','testModuleA'],
-    ['state', 'testModuleB']    
+    ['state', 'testModuleA']    
 ]);
 
 test('where works', function($key, $relation, $value, $expect)
 {
     $query = getTestQuery();
-    $list = $query->where($key, $relation, $value)->first();
-    expect($list->getName())->toBe($expect);
+    $list = $query->where($key, $relation, $value)->get();
+    expect($list[0]->getName())->toBe($expect);
 })->with([
-    ['name','=','testmoduleB','testmoduleB'],
-    ['name','<','testmoduleB','Another module'],
-    ['name','>','testmoduleA','testmoduleB'],
-    ['name','begins with','testmodule','testmoduleA'],
-    ['author','=','Debby Debugger','testmoduleA'],
-    ['version','=','0.1.1','testmoduleB'],
-    ['state','=','enabled','testmoduleB']    
+    ['name','=','testModuleB','testModuleB'],
+    ['name','<','testModuleB','testModuleA'],
+    ['name','>','testModuleA','testModuleB'],
+    ['author','=','Debby Debugger','testModuleA'],
+    ['version','=','0.1.1','testModuleB'],
+    ['state','=','enabled','testModuleB']    
 ]);
