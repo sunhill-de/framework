@@ -3,6 +3,7 @@
 namespace Sunhill\Framework\Plugins;
 
 use IsaEken;
+use Sunhill\Framework\Plugins\Exceptions\WrongInstallersFormatException;
 
 class Plugin extends IsaEken\PluginSystem\Plugin
 {
@@ -41,6 +42,73 @@ class Plugin extends IsaEken\PluginSystem\Plugin
     public function handle(...$arguments): mixed
     {
         return true;
+    }
+    
+    protected $installers = [];
+    
+    /**
+     * Checks if the installers are in an expected format
+     */
+    protected function checkInstallers()
+    {
+        if (!is_array($this->installers)) {
+           throw new WrongInstallersFormatException("The installers are not an array");
+        }        
+    }
+
+    /**
+     * Returns all installers that match a given criteria
+     * 
+     * @param string $relation
+     * @param string $version
+     * @return unknown[]
+     */
+    protected function getInstallers(string $relation, string $version)
+    {
+        $result = [];
+        foreach ($this->installers as $inst_version => $installer) {
+            if (version_compare($inst_version, $version, $relation)) {
+                $result[] = $installer;
+            }
+        }
+        return $result;
+    }
+    
+    /**
+     * Executes a list of installers
+     * 
+     * @param array $list
+     */
+    protected function executeInstallers(array $list)
+    {
+        foreach ($list as $installer) {
+            if (is_string($installer) && (class_exists($installer))) {
+                $installer = new $installer();
+            };
+            if (is_a($installer, PluginInstaller::class)) {
+                $installer->execute();
+            } else {
+               throw new WrongInstallersFormatException("The given installer is not a PluginInstaller"); 
+            }
+        }
+    }
+    
+    public function install()
+    {
+        $this->checkInstallers();
+        $this->executeInstallers($this->getInstallers('=','0'));
+    }
+    
+    public function uninstall()
+    {
+        $this->checkInstallers();        
+        $this->executeInstallers($this->getInstallers('=','-1'));
+    }
+    
+    public function upgrade(string $from)
+    {
+        $this->checkInstallers();        
+        $this->executeInstallers($this->getInstallers('>',$from));
     }
     
 }

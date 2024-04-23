@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunhill\Framework\Tests\Unit\Plugins;
+namespace Sunhill\Framework\Tests\Unit\Plugins\TestPlugins;
 
 use Sunhill\Framework\Plugins\Plugin;
 use IsaEken\PluginSystem\Enums\PluginState;
@@ -18,4 +18,5 @@ class TestPluginA extends Plugin
     
     protected $provides = ['marketeer'];
     
+    public $installers = [];
 }
