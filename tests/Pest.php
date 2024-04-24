@@ -39,7 +39,89 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function getTemp()
 {
-    // ..
+    return dirname(__FILE__).'/tmp';    
 }
+
+function clearDir($path)
+{
+    $dir = dir($path);
+    while (($entry = $dir->read()) !== false) {
+        if (($entry == '.') || ($entry == '..')) {
+            continue;
+        }
+        if (is_dir($path.'/'.$entry)) {
+            clearDir($path.'/'.$entry);
+        } else if (is_file($path.'/'.$entry) || is_link($path.'/'.$entry)) {
+            unlink($path);
+        }
+    }
+    if ($path !== getTemp()) {
+        rmdir($path);
+    }
+}
+
+function clearTemp()
+{
+    clearDir(getTemp());    
+}
+
+/**
+ * copied from https://jtreminio.com/blog/unit-testing-tutorial-part-iii-testing-protected-private-methods-coverage-reports-and-crap/
+ * Calls the protected or private method "$methodName" of the object $object with the given parameters and
+ * returns its result
+ * @param unknown $object
+ * @param unknown $methodName
+ * @param array $parameters
+ * @return unknown
+ */
+function invokeMethod(&$object, $methodName, array $parameters = array())
+{
+    $reflection = new \ReflectionClass(get_class($object));
+    $method = $reflection->getMethod($methodName);
+    $method->setAccessible(true);
+    
+    return $method->invokeArgs($object, $parameters);
+}
+
+/**
+ * Alias for invokeMethod
+ * @param unknown $object
+ * @param unknown $methodName
+ * @param array $parameters
+ * @return \Sunhill\Basic\Tests\unknown
+ */
+function callProtectedMethod(&$object, $methodName, array $parameters = array()) {
+    return invokeMethod($object, $methodName, $parameters);
+}
+
+/**
+ * copied and modified from https://stackoverflow.com/questions/18558183/phpunit-mockbuilder-set-mock-object-internal-property
+ * Sets the value of the property "$property_name" of object "$object" to value "$value"
+ * @param unknown $object
+ * @param unknown $property_name
+ * @param unknown $value
+ */
+function setProtectedProperty(&$object,$property_name,$value) {
+    $reflection = new \ReflectionClass($object);
+    $reflection_property = $reflection->getProperty($property_name);
+    $reflection_property->setAccessible(true);
+    
+    $reflection_property->setValue($object, $value);
+}
+
+/**
+ * copied and modified from https://stackoverflow.com/questions/18558183/phpunit-mockbuilder-set-mock-object-internal-property
+ * Returns the value of the property "$property_name" of object "$object"
+ * @param unknown $object
+ * @param unknown $property_name
+ */
+function getProtectedProperty(&$object,$property_name) {
+    $reflection = new \ReflectionClass($object);
+    $reflection_property = $reflection->getProperty($property_name);
+    $reflection_property->setAccessible(true);
+    
+    return $reflection_property->getValue($object);
+}
+
