@@ -1,5 +1,7 @@
 <?php
 
+use Sunhill\Basic\Tests\Constraints\DatabaseHasTableConstraint;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -38,7 +40,6 @@ expect()->extend('toBeOne', function () {
 | global functions to help you to reduce the number of lines of code in your test files.
 |
 */
-
 function getTemp()
 {
     return dirname(__FILE__).'/tmp';    
@@ -54,7 +55,7 @@ function clearDir($path)
         if (is_dir($path.'/'.$entry)) {
             clearDir($path.'/'.$entry);
         } else if (is_file($path.'/'.$entry) || is_link($path.'/'.$entry)) {
-            unlink($path);
+            unlink($path.'/'.$entry);
         }
     }
     if ($path !== getTemp()) {

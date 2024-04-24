@@ -5,6 +5,10 @@ namespace Sunhill\Framework\Tests\Unit\Plugins;
 use Sunhill\Framework\Tests\TestCase;
 use Sunhill\Framework\Tests\Unit\Plugins\TestPlugins\TestPluginInstaller;
 use Sunhill\Framework\Plugins\Plugin;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Sunhill\Framework\Plugins\Exceptions\PluginRootDirDoesntExistException;
+use Sunhill\Framework\Plugins\Exceptions\FileNotFoundException;
 
 uses(TestCase::class);
 
@@ -14,7 +18,7 @@ test('getStorageDir() default', function()
     $plugin->shouldReceive('getName')->once()->andReturn('testplugin');
     $test = new TestPluginInstaller();
     $test->setOwner($plugin);
-    expect($test->getStorageDir())->toBe(storage_path('testplugin'));
+    expect($test->getStorageDir())->toBe(storage_path('plugins/testplugin'));
 });
 
 test('setStorageDir() overrides default', function()
@@ -44,6 +48,13 @@ test('Directory is renamed', function()
     expect(file_exists(getTemp().'/newtest'))->toBe(true);
 });
 
+it("fails when directory doesn't exist", function()
+{
+    $test = new TestPluginInstaller();
+    $test->setStorageDir(getTemp());
+    callProtectedMethod($test, 'renameDir',['nonexisting','newtest']);    
+})->throws(FileNotFoundException::class);
+
 test('Dirctory is removed', function() 
 {
     clearTemp();
@@ -59,8 +70,8 @@ test('File is created', function()
     clearTemp();
     $test = new TestPluginInstaller();
     $test->setStorageDir(getTemp());
-    callProtectedMethod($test, 'createFile', ['testfile.txt']);
-    expect(file_exists(getTemp().'/testfile.txtx'))->toBe(true);
+    callProtectedMethod($test, 'createFile', ['testfile.txt','Test content']);
+    expect(file_exists(getTemp().'/testfile.txt'))->toBe(true);
 });
         
 test('File is renamed', function()
@@ -70,8 +81,8 @@ test('File is renamed', function()
     $test->setStorageDir(getTemp());
     file_put_contents(getTemp().'/testfile.txt','Test');
     callProtectedMethod($test, 'renameFile', ['testfile.txt','newfile.txt']);
-    expect(file_exists(getTemp().'/testfile.txtx'))->toBe(false);    
-    expect(file_exists(getTemp().'/newfile.txtx'))->toBe(true);
+    expect(file_exists(getTemp().'/testfile.txt'))->toBe(false);    
+    expect(file_exists(getTemp().'/newfile.txt'))->toBe(true);
 });
 
 test('File is removed', function()
@@ -81,24 +92,53 @@ test('File is removed', function()
     $test->setStorageDir(getTemp());
     file_put_contents(getTemp().'/testfile.txt','Test');
     callProtectedMethod($test, 'deleteFile', ['testfile.txt']);
-    expect(file_exists(getTemp().'/testfile.txtx'))->toBe(false);    
+    expect(file_exists(getTemp().'/testfile.txt'))->toBe(false);    
 });
 
 test('table is created', function()
 {
-    
+    Schema::dropIfExists('testtable');
+    $test = new TestPluginInstaller();
+    callProtectedMethod($test,'createTable',['testtable', function(Blueprint $table)
+    {
+       $table->integer('id');
+       $table->string('name',10);
+    }]);
+    expect(Schema::hasTable('testtable'))->toBe(true);
+    expect(Schema::hasColumn('testtable', 'name'))->toBe(true);
 });
 
 test('table is modified', function()
 {
-    
+    Schema::dropIfExists('testtable');
+    Schema::create('testtable',function(Blueprint $table) 
+    {
+        $table->integer('id');
+        $table->string('name',10);        
+    });
+    $test = new TestPluginInstaller();
+    callProtectedMethod($test,'modifyTable',['testtable', function(Blueprint $table)
+    {
+        $table->renameColumn('name','name_id');
+    }]);
+    expect(Schema::hasColumn('testtable', 'name_id'))->toBe(true);
+    expect(Schema::hasColumn('testtable', 'name'))->toBe(false);
 });
 
 test('table is removed', function()
 {
-    
+    Schema::dropIfExists('testtable');
+    Schema::create('testtable',function(Blueprint $table)
+    {
+        $table->integer('id');
+        $table->string('name',10);
+    });
+    $test = new TestPluginInstaller();
+    callProtectedMethod($test,'deleteTable',['testtable']);
+    expect(Schema::hasTable('testtable'))->toBe(false);    
 });
 
+/*
 test('Collection is created', function()
 {
     
@@ -127,4 +167,4 @@ test('Object is modified', function()
 test('Object is deleted', function()
 {
     
-});
+}); */
