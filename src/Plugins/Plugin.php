@@ -110,5 +110,11 @@ class Plugin extends IsaEken\PluginSystem\Plugin
         $this->checkInstallers();        
         $this->executeInstallers($this->getInstallers('>',$from));
     }
+
+    protected $dependencies = [];
     
+    public function getDependencies(): array
+    {
+        return $this->dependencies;
+    }
 }
