@@ -3,9 +3,9 @@
 use Sunhill\Framework\Tests\TestCase;
 use Sunhill\Framework\Facades\Site;
 use Sunhill\Framework\Modules\FeatureModules\FeatureModule;
-use Sunhhil\Framework\Tests\Responses\SampleViewResponse;
-use Sunhhil\Framework\Tests\Responses\SampleParameterResponse;
-use Sunhhil\Framework\Tests\Responses\SampleIndividualIndexResponse;
+use Sunhill\Framework\Tests\Responses\SampleViewResponse;
+use Sunhill\Framework\Tests\Responses\SampleIndividualIndexResponse;
+use Sunhill\Framework\Tests\Responses\SampleParameterResponse;
 
 uses(TestCase::class);
 

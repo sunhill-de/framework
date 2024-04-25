@@ -4,6 +4,7 @@ use Sunhill\Framework\Response\Exceptions\MissingTemplateException;
 use Sunhill\Framework\Modules\AbstractModule;
 use Illuminate\Support\Facades\Route;
 use Sunhill\Framework\Tests\Responses\SampleViewResponse;
+use Sunhill\Framework\Tests\Responses\SampleAbstractResponse;
 
 uses(\Sunhill\Framework\Tests\TestCase::class);
 
