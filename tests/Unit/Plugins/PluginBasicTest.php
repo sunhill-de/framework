@@ -3,6 +3,7 @@
 namespace Sunhill\Framework\Tests\Unit\Plugins;
 
 use Sunhill\Framework\Tests\TestCase;
+use Sunhill\Framework\Tests\Unit\Plugins\TestPlugins\TestPluginA;
 
 uses(TestCase::class);
 
