@@ -1,11 +1,9 @@
 <?php
 
 use Sunhill\Framework\Response\Exceptions\MissingTemplateException;
-use Sunhhil\Framework\Tests\Responses\SampleViewResponse;
-use Sunhill\Framework\Tests\TestCase;
 use Sunhill\Framework\Modules\AbstractModule;
 use Illuminate\Support\Facades\Route;
-use Sunhhil\Framework\Tests\Responses\SampleAbstractResponse;
+use Sunhill\Framework\Tests\Responses\SampleViewResponse;
 
 uses(\Sunhill\Framework\Tests\TestCase::class);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunhhil\Framework\Tests\Responses;
+namespace Sunhill\Framework\Tests\Responses;
 
 use Sunhill\Framework\Response\ViewResponses\TileViewResponse;
 
