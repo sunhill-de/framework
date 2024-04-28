@@ -4,5 +4,6 @@
 
 @parent
 <div class="page">
+@yield('content')
 </div>
 @endsection
