@@ -7,6 +7,7 @@ use Sunhill\Framework\Crud\AbstractCrudEngine;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
 use Sunhill\Framework\Crud\Exceptions\FieldNotSortableException;
+use Sunhill\Framework\Crud\CrudListResponse;
 
 uses(TestCase::class);
 
@@ -19,7 +20,7 @@ function getStdClass($items)
     return $result;
 }
 
-function getListResponse($entries = 30, $features = ['show','edit','delete'], $offset = 0, $limit = 10, $order = null, $filter = null, $data = null, $filters = null)
+function getListResponse($entries = 30, $features = ['show','edit','delete','userfilters'], $offset = 0, $limit = 10, $order = null, $filter = null, $data = null, $filters = null)
 {
     if (is_null($features)) {
         $features = ['show','edit','delete','userfilters'];
@@ -40,18 +41,26 @@ function getListResponse($entries = 30, $features = ['show','edit','delete'], $o
     }
     App::setLocale('en');
     $engine = \Mockery::mock(AbstractCrudEngine::class);
-    $engine->shouldReceive('getElementCount')->once()->andReturn($entries);
-    $engine->shouldReceive('isSortable')->once()->with('id')->anReturn(true);
-    $engine->shouldReceive('isSortable')->once()->with('item')->anReturn(true);
-    $engine->shouldReceive('isSortable')->once()->with('payload')->anReturn(false);
-    $engine->shouldReceive('getFilters')->once()->andReturn(is_null($filter)?['itemfilter'=>'Item filter','payloadfilter'=>'Payload filter']:$filter);
-    $engine->shouldReceive('getListEntries')->once()->with($offset, $limit, $order, $filter)->andReturn(
-        $data);
+    $engine->shouldReceive('getElementCount')->once()->andReturns($entries);
+    $engine->shouldReceive('isSortable')->once()->with('id')->andReturn(true);
+    $engine->shouldReceive('isSortable')->once()->with('item')->andReturns(true);
+    $engine->shouldReceive('isSortable')->once()->with('payload')->andReturns(false);
+    $engine->shouldReceive('getFilters')->once()->andReturns(is_null($filter)?['itemfilter'=>'Item filter','payloadfilter'=>'Payload filter']:$filter);
+    $engine->shouldReceive('getListEntries')->once()->with($offset, $limit, $order, $filter)->andReturns($data);
+    $engine->shouldReceive('getColumns')->once()->andReturn(['id'=>'id','item'=>'value','payload'=>'value']);
+    $engine->shouldReceive('getColumnTitle')->once()->with('id')->andReturn('id');
+    $engine->shouldReceive('getColumnTitle')->once()->with('item')->andReturn('item');
+    $engine->shouldReceive('getColumnTitle')->once()->with('payload')->andReturn('payload');
     Route::get('/test/list/{offset?}/{limit?}/{order?}/{filter?}', function() { return 'list'; })->name('test.list');
     Route::get('/test/show/{id}', function($id) { return 'show '.$id; })->name('test.show');
     Route::get('/test/edit/{id}', function($id) { return 'edit '.$id; })->name('test.edit');
     Route::get('/test/delete/{id}', function($id) { return 'delete '.$id; })->name('test.delete');
+    Route::get('/admin', function() { return 'admin'; })->name('admin.settings');
     $test = new CrudListResponse($engine);
+    $test->setParameters([ // This is required because we call it directly
+        'sitename'=>'testsite',
+        'hamburger_entries'=>[],
+    ]);
     $test->setOffset($offset);
     $test->setLimit($limit);
     if (!is_null($order)) {
@@ -186,29 +195,29 @@ test('CRUD list displays paginator with ellipse with offset 500', function()
 test('CRUD list displays order columns', function()
 {
     $response = getListResponse();
-    expect($response)->toContain('<td><a class="active_asc" href="'.route('test_list',['offset'=>0,'limit'=>10,'order'=>'!id']).'>id</a></td>');
-    expect($response)->toContain('<td><a href="'.route('test_list',['offset'=>0,'limit'=>10,'order'=>'item']).'>item</a></td>');
+    expect($response)->toContain('<td><a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'>id</a></td>');
+    expect($response)->toContain('<td><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'>item</a></td>');
     expect($response)->toContain('<td>payload</td>');
 });
 
 test('CRUD list displays order columns with offset', function()
 {
     $response = getListResponse(30,null,20);
-    expect($response)->toContain('<td><a class="active_asc" href="'.route('test_list',['offset'=>0,'limit'=>10,'order'=>'!id']).'>id</a></td>');
-    expect($response)->toContain('<td><a href="'.route('test_list',['offset'=>0,'limit'=>10,'order'=>'item']).'>item</a></td>');
+    expect($response)->toContain('<td><a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'>id</a></td>');
+    expect($response)->toContain('<td><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'>item</a></td>');
     expect($response)->toContain('<td>payload</td>');
 });
 
 test('CRUD list respects ordering asc and marks column', function()
 {
    $response = getListResponse(10, null, 0, 10, 'item');
-   expect($response)->toContain('<a class="active_asc" href="'.route('test_list',['offset'=>0,'limit'=>10,'order'=>'!item']).">item</a>");
+   expect($response)->toContain('<a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!item']).">item</a>");
 });
 
 test('CRUD list respects ordering desc and marks column', function()
 {
     $response = getListResponse(10, null, 0, 10, '!item');
-    expect($response)->toContain('<a class="active_desc" href="'.route('test_list',['offset'=>0,'limit'=>10,'order'=>'item']).">item</a>");
+    expect($response)->toContain('<a class="active_desc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).">item</a>");
 });
 
 test('CRUD list fails when sort field is not sortable', function()
@@ -220,5 +229,5 @@ test('CRUD list fails when sort field is not sortable', function()
 test('CRUD list offsers filters', function()
 {
     $response = getListResponse();
-    expect($response)->toContain('<select class="filter"><option value="none">(no filter)>option>')
+    expect($response)->toContain('<select class="filter">')->toContain('<option value="none">(no filter)>option>');
 });
