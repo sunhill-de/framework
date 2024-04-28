@@ -7,6 +7,7 @@ use Sunhill\Framework\Managers\PluginManager;
 use Sunhill\Framework\Facades\Plugins;
 use Sunhill\Framework\Managers\SiteManager;
 use Sunhill\Framework\Facades\Site;
+use Illuminate\Support\Facades\Blade;
 
 class SunhillFrameworkServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,7 @@ class SunhillFrameworkServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views','framework');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang','framework');
+        Blade::component('optional_link', \OptionalLink::class);
         Site::setupRoutes();
     }
 }
