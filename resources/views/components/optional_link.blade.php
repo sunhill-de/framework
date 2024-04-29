@@ -1,1 +1,1 @@
-<div class="optional-link">@if(!empty($entry->link))<a href="{{ $entry->link }}">@endif{{ __( $entry->title ) }}@if(!empty($entry->link))</a>@endif</div>
+@if(!empty($entry->link))<a href="{{ $entry->link }}">@endif{{ __( $entry->title ) }}@if(!empty($entry->link))</a>@endif

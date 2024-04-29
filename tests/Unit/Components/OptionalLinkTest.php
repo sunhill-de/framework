@@ -7,13 +7,13 @@ uses(TestCase::class);
 test('entry with link is rendered', function()
 {
     expect(view('framework::components.optional_link',['entry'=>makeStdClass(['link'=>'http://example.com','title'=>'example'])])->render())
-    ->toContain('<div class="optional-link"><a href="http://example.com">example</a></div>');
+    ->toContain('<a href="http://example.com">example</a>');
 });
 
 test('entry without link is rendered', function()
 {
     expect(view('framework::components.optional_link',['entry'=>makeStdClass(['title'=>'example'])])->render())
-    ->toContain('<div class="optional-link">example</div>');    
+    ->toContain('example');    
 });
 
 test('template with optional-link tag is rendered', function()
@@ -21,7 +21,7 @@ test('template with optional-link tag is rendered', function()
     expect(view('framework::test.optionallink', [
         'link'=>makeStdClass(['link'=>'http://example.com','title'=>'example']), 
         'sitename'=>'test'
-    ])->render())->toContain('<div class="optional-link"><a href="http://example.com">example</a></div>');
+    ])->render())->toContain('<a href="http://example.com">example</a>');
 });
 
 test('entry with link as array is rendered', function()
@@ -30,7 +30,7 @@ test('entry with link as array is rendered', function()
         'link'=>['link'=>'http://example.com','title'=>'example'],
         'sitename'=>'test'
     ])->render())
-    ->toContain('<div class="optional-link"><a href="http://example.com">example</a></div>');
+    ->toContain('<a href="http://example.com">example</a>');
 });
 
 test('entry with link single assoc array is rendered', function()
@@ -39,7 +39,7 @@ test('entry with link single assoc array is rendered', function()
         'link'=>['example'=>'http://example.com'],
         'sitename'=>'test'        
     ])->render())
-    ->toContain('<div class="optional-link"><a href="http://example.com">example</a></div>');
+    ->toContain('<a href="http://example.com">example</a>');
 });
 
 
@@ -48,7 +48,7 @@ test('template without optional-link tag is rendered', function()
     expect(view('framework::test.optionallink',[
         'link'=>makeStdClass(['title'=>'example']),
         'sitename'=>'test'        
-    ])->render())->toContain('<div class="optional-link">example</div>');
+    ])->render())->toContain('example');
     
 });
 
@@ -58,6 +58,6 @@ test('entry without link (only title) is rendered', function()
         'link'=>'example',
         'sitename'=>'test'
     ])->render())
-    ->toContain('<div class="optional-link">example</div>');
+    ->toContain('example');
 });
 
