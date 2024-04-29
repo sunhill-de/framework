@@ -1,5 +1,7 @@
 <?php
 
+namespace Sunhill\Framework\Components;
+
 use Illuminate\View\Component;
 use Illuminate\View\View;
 
