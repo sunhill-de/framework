@@ -17,7 +17,7 @@ class OptionalLink extends Component
         }
         
         $this->entry = new \StdClass();
-        if (is_string($entry)) {
+        if (is_scalar($entry)) {
             $this->entry->title = $entry;
             return;
         }
@@ -33,7 +33,7 @@ class OptionalLink extends Component
                 return;
             }
         }
-        throw new \Exception('Cant process data to a optional link');
+        throw new \Exception('Cant process data to a optional link: '.var_export($entry,true));
     }
     
     public function render(): View
