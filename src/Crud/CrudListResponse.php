@@ -3,6 +3,7 @@
 namespace Sunhill\Framework\Crud;
 
 use Sunhill\Framework\Response\ViewResponses\ViewResponse;
+use Sunhill\Framework\Crud\Exceptions\FieldNotSortableException;
 
 class CrudListResponse extends ViewResponse
 {
@@ -68,6 +69,13 @@ class CrudListResponse extends ViewResponse
      */
     protected $order_dir = 'asc';
     
+    private function checkOrderColumn(string $order)
+    {
+        if (!$this->engine->isSortable($order)) {
+            throw new FieldNotSortableException("The field '$order' is not sortable");
+        }
+    }
+    
     /**
      * Setter for $order
      * 
@@ -78,10 +86,12 @@ class CrudListResponse extends ViewResponse
     {
         if ($order[0] == '!') {
             $this->order = substr($order,1);
+            $this->checkOrderColumn($this->order);
             $this->order_dir = 'desc';
             return $this;
         }
         $this->order = $order;
+        $this->checkOrderColumn($this->order);
         $this->order_dir = 'asc';
         return $this;
     }
@@ -253,7 +263,7 @@ class CrudListResponse extends ViewResponse
         return route($this->route_base.'.'.$addition, array_merge($this->route_params,$params));    
     }
     
-    private function getColumnSortLink($column)
+    private function createSortLink(string $column): string
     {
         $lokal_params = [
             'offset'=>0,
@@ -266,6 +276,54 @@ class CrudListResponse extends ViewResponse
         return $this->doRoute('list', $lokal_params);        
     }
     
+    private function getReverseSortLink(string $column)
+    {
+        if ($this->order_dir == 'asc') {
+            return $this->createSortLink('!'.$column);
+        }
+        return $this->createSortLink($column);
+    }
+    
+    private function getSortLink(string $column)
+    {
+        if (!$this->engine->isSortable($column)) {
+            return;
+        }
+        if ($this->order == $column) {
+            return $this->getReverseSortLink($column);
+        }
+        return $this->createSortLink($column);
+    }
+    
+    protected function getColumn(string $name, string $title, string $class, ?string $link = null)
+    {
+        $entry = new \StdClass();
+        $entry->name = $name;
+        $entry->title = $title;
+        $entry->class = $class;
+        $entry->link = $link;
+        return $entry;
+    }
+    
+    protected function getGroupSelectorColumn(): \StdClass
+    {
+        return $this->getColumn('','','group');
+    }
+    
+    protected function getEmptyColumn(): \StdClass
+    {
+        return $this->getColumn('','','empty');    
+    }
+    
+    protected function getDataColumn(string $column, string $type): \StdClass
+    {
+        if ($column == $this->order) {
+            return $this->getColumn($column, $this->engine->getColumnTitle($column), $type.' active_'.$this->order_dir, $this->getSortLink($column));            
+        } else {
+            return $this->getColumn($column, $this->engine->getColumnTitle($column), $type, $this->getSortLink($column));
+        }
+    }
+    
     /**
      * Assembles the data for the table header that includes the caption of the columns and
      * (if sortable) the link to the sort field
@@ -276,33 +334,20 @@ class CrudListResponse extends ViewResponse
     {
         $columns = $this->engine->getColumns();
         $return = [];
+        if (!empty($this->group_actions)) {
+            $return[] = $this->getGroupSelectorColumn();
+        }
         foreach ($columns as $column=>$type) {
-            $entry = new \StdClass();
-            $entry->name = $column;
-            $entry->title = $this->engine->getColumnTitle($column);
-            $entry->class = $type;
-            if ($entry->sortable = $this->engine->isSortable($column)) {
-                $entry->link = $this->getColumnSortLink($column);
-            }
-            $return[] = $entry;
+            $return[] = $this->getDataColumn($column, $type);
         }
         if ($this->enable_show) {
-            $entry->name = '';
-            $entry->title = ' ';
-            $entry->class = 'link';            
-            $return[] = $entry;
+            $return[] = $this->getEmptyColumn();
         }
         if ($this->enable_edit) {
-            $entry->name = '';
-            $entry->title = ' ';
-            $entry->class = 'link';
-            $return[] = $entry;
+            $return[] = $this->getEmptyColumn();
         }
         if ($this->enable_delete) {
-            $entry->name = '';
-            $entry->title = ' ';
-            $entry->class = 'link';
-            $return[] = $entry;
+            $return[] = $this->getEmptyColumn();
         }
         return $return;
     }
