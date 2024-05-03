@@ -12,6 +12,9 @@
 </select>
 </div>
 @endif
+@if($search)
+<div class="element"><input name="search" id="search"><button id="submit_search">{{ __('search') }}</button></div>
+@endif
 </div>
 <table class="data">
  <th>

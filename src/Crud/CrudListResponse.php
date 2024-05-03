@@ -360,7 +360,14 @@ class CrudListResponse extends ViewResponse
         return $return;
     }
     
-    protected function addLink(string $kind, string $title, $id)
+    /**
+     * 
+     * @param string $kind
+     * @param string $title
+     * @param unknown $id
+     * @return \StdClass
+     */
+    protected function addLink(string $kind, string $title, $id): \StdClass
     {
         $link = new \StdClass();
         $link->class = 'link '.$kind;
@@ -427,7 +434,7 @@ class CrudListResponse extends ViewResponse
             $result[] = $this->getFilterEntry($filter, $name);
         }
         if ($this->enable_userfilters) {
-            $result[] = $this->getFilterEntry('userfilter','user defined filter...');            
+            $result[] = $this->getFilterEntry('userfilter','User defined filter...');            
         }
         return $result;
     }
@@ -436,9 +443,9 @@ class CrudListResponse extends ViewResponse
      * Creates the search field or return an empty array when there is no search field
      * @return array
      */
-    protected function getSearch(): array
+    protected function getSearch(): bool
     {
-        return [];
+        return $this->enable_search;
     }
         
     // ************************************ Paginator ****************************************

@@ -354,7 +354,7 @@ test('CRUD list doesnt offers filters when all empty', function()
 
 test('CRUD list does offer at least user filters when fixed are empty', function()
 {
-    $response = getListResponse(features: [], filters:[]);
+    $response = getListResponse(filters:[]);
     expect($response)
     ->toContain('<select class="filter" name="filter" id="filter">')
     ->toContain('<option value="userfilter">User defined filter...</option>');
@@ -364,6 +364,14 @@ test('CRUD list does offer a search field', function()
 {
     $response = getListResponse();
     expect($response)->toContain('<div class="element"><input name="search" id="search"');
+    expect($response)->toContain('<button id="submit_search">search</button>');
+})->group('crud','filter');
+
+test('CRUD list hides a search field when disabled', function()
+{
+    $response = getListResponse(features:[]);
+    expect($response)->not->toContain('<div class="element"><input name="search" id="search"');
+    expect($response)->not->toContain('<button id="submit_search">search</button>');
 })->group('crud','filter');
 
 // ================================== Group actions =======================================
