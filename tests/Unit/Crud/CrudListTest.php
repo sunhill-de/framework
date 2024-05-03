@@ -20,7 +20,7 @@ function getStdClass($items)
     return $result;
 }
 
-function getListResponse($entries = 30, $features = null, $offset = 0, $limit = 10, $order = null, $filter = null, $data = null, $filters = null, $group_actions = null)
+function getListResponse($entries = 30, $features = null, $offset = 0, $limit = 10, $order = null, $order_dir = 'asc', $filter = null, $data = null, $filters = null, $group_actions = null)
 {
     if (is_null($features)) {
         $features = ['show','edit','delete','userfilters','search'];
@@ -49,7 +49,7 @@ function getListResponse($entries = 30, $features = null, $offset = 0, $limit = 
     $engine->shouldReceive('isSortable')->once()->with('item')->andReturns(true);
     $engine->shouldReceive('isSortable')->once()->with('payload')->andReturns(false);
     $engine->shouldReceive('getFilters')->once()->andReturns(is_null($filters)?['itemfilter'=>'Item filter','payloadfilter'=>'Payload filter']:$filters);
-    $engine->shouldReceive('getListEntries')->once()->with($offset, $limit, $order, $filter)->andReturns($data);
+    $engine->shouldReceive('getListEntries')->once()->with($offset, $limit, $order, $order_dir, $filter)->andReturns($data);
     $engine->shouldReceive('getColumns')->atLeast(1)->andReturn(['id'=>'id','item'=>'value','payload'=>'value']);
     $engine->shouldReceive('getColumnTitle')->once()->with('id')->andReturn('id');
     $engine->shouldReceive('getColumnTitle')->once()->with('item')->andReturn('item');
@@ -122,14 +122,14 @@ test('CRUD list displays delete link', function()
 
 test('CRUD doesnt display links when features disbaled', function()
 {
-    $response = getListResponse(30,[]);
+    $response = getListResponse(features: []);
     expect($response)->not->toContain('<a class="show" href="'.route('test.show',['id'=>1]).'">show</a>');
     expect($response)->not->toContain('<a class="edit" href="'.route('test.edit',['id'=>1]).'">edit</a>');
     expect($response)->not->toContain('<a class="delete" href="'.route('test.delete',['id'=>1]).'">delete</a>');
 });
 
 test('CRUD list handles empty data set', function() {
-  $response = getListResponse(0,null,0,10,null,null,[]);
+  $response = getListResponse(data: []);
   expect($response)->toContain('No entries.');
 });
 
@@ -247,7 +247,7 @@ test('CRUD list displays 12 pages-paginator with ellipse with offset 120', funct
 
 test('CRUD list displays paginator with ellipse with offset 0', function() 
 {
-   $response = getListResponse(1000,null,0);
+   $response = getListResponse(entries: 1000,offset: 0);
    expect($response)->toContain('<div class="active-page">1</div>');
    expect($response)->toContain(route('test.list',['offset'=>90,'limit'=>10]));
    expect($response)->not->toContain(route('test.list',['offset'=>100,'limit'=>10]));
@@ -257,24 +257,24 @@ test('CRUD list displays paginator with ellipse with offset 0', function()
 
 test('CRUD list displays paginator with ellipse with offset 50', function()
 {
-    $response = getListResponse(1000,null,50);
-    expect($response)->toConatin(route('test.list',['offset'=>0,'limit'=>10]));
-    expect($response)->toConatin(route('test.list',['offset'=>100,'limit'=>10]));
-    expect($response)->not->toConatin(route('test.list',['offset'=>110,'limit'=>10]));
+    $response = getListResponse(entries: 1000, offset: 50);
+    expect($response)->toContain(route('test.list',['offset'=>0,'limit'=>10]));
+    expect($response)->toContain(route('test.list',['offset'=>100,'limit'=>10]));
+    expect($response)->not->toContain(route('test.list',['offset'=>110,'limit'=>10]));
     expect($response)->toContain('<div class="ellipse">...</div>');
-    expect($response)->toConatin(route('test.list',['offset'=>990,'limit'=>10]));
+    expect($response)->toContain(route('test.list',['offset'=>990,'limit'=>10]));
 });
 
 test('CRUD list displays paginator with ellipse with offset 500', function()
 {
-    $response = getListResponse(1000,null,50);
-    expect($response)->toConatin(route('test.list',['offset'=>0,'limit'=>10]));
-    expect($response)->not->toConatin(route('test.list',['offset'=>440,'limit'=>10]));
-    expect($response)->toConatin(route('test.list',['offset'=>450,'limit'=>10]));
-    expect($response)->toConatin(route('test.list',['offset'=>550,'limit'=>10]));
+    $response = getListResponse(entries: 1000, offset: 500);
+    expect($response)->toContain(route('test.list',['offset'=>0,'limit'=>10]));
+    expect($response)->not->toContain(route('test.list',['offset'=>440,'limit'=>10]));
+    expect($response)->toContain(route('test.list',['offset'=>450,'limit'=>10]));
+    expect($response)->toContain(route('test.list',['offset'=>550,'limit'=>10]));
     expect($response)->toContain('<div class="ellipse">...</div>');
-    expect($response)->not->toConatin(route('test.list',['offset'=>560,'limit'=>10]));
-    expect($response)->toConatin(route('test.list',['offset'=>990,'limit'=>10]));
+    expect($response)->not->toContain(route('test.list',['offset'=>560,'limit'=>10]));
+    expect($response)->toContain(route('test.list',['offset'=>990,'limit'=>10]));
 });
 
 // ============================ sorting ================================
@@ -288,7 +288,7 @@ test('CRUD list displays order columns', function()
 
 test('CRUD list displays order columns with offset', function()
 {
-    $response = getListResponse(30,null,20);
+    $response = getListResponse(entries: 30,offset: 20);
     expect($response)->toContain('<td><a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'>id</a></td>');
     expect($response)->toContain('<td><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'>item</a></td>');
     expect($response)->toContain('<td>payload</td>');

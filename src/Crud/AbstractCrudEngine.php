@@ -18,7 +18,7 @@ class AbstractCrudEngine
         
     }
     
-    public function getListEntries(int $offset, int $limit, ?string $order, ?string $filter): array
+    public function getListEntries(int $offset, int $limit, ?string $order, ?string $order_dir, ?string $filter): array
     {
         
     }

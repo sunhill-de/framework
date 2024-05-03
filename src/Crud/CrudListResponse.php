@@ -62,6 +62,13 @@ class CrudListResponse extends ViewResponse
     protected $order;
     
     /**
+     * Indicates the ordering direction of fields
+     * 
+     * @var string
+     */
+    protected $order_dir = 'asc';
+    
+    /**
      * Setter for $order
      * 
      * @param string $order
@@ -69,7 +76,13 @@ class CrudListResponse extends ViewResponse
      */
     public function setOrder(string $order): self
     {
+        if ($order[0] == '!') {
+            $this->order = substr($order,1);
+            $this->order_dir = 'desc';
+            return $this;
+        }
         $this->order = $order;
+        $this->order_dir = 'asc';
         return $this;
     }
     
@@ -253,6 +266,12 @@ class CrudListResponse extends ViewResponse
         return $this->doRoute('list', $lokal_params);        
     }
     
+    /**
+     * Assembles the data for the table header that includes the caption of the columns and
+     * (if sortable) the link to the sort field
+     * 
+     * @return unknown[]|\StdClass[]
+     */
     protected function getColumns()
     {
         $columns = $this->engine->getColumns();
@@ -271,16 +290,19 @@ class CrudListResponse extends ViewResponse
             $entry->name = '';
             $entry->title = ' ';
             $entry->class = 'link';            
+            $return[] = $entry;
         }
         if ($this->enable_edit) {
             $entry->name = '';
             $entry->title = ' ';
             $entry->class = 'link';
+            $return[] = $entry;
         }
         if ($this->enable_delete) {
             $entry->name = '';
             $entry->title = ' ';
             $entry->class = 'link';
+            $return[] = $entry;
         }
         return $return;
     }
@@ -296,7 +318,7 @@ class CrudListResponse extends ViewResponse
     protected function getDataRows()
     {
         $columns = $this->engine->getColumns();
-        $data = $this->engine->getListEntries($this->offset, $this->limit, $this->order, $this->filter);
+        $data = $this->engine->getListEntries($this->offset, $this->limit, $this->order, $this->order_dir, $this->filter);
         
         $result = [];
         foreach ($data as $data_row) {
@@ -357,6 +379,7 @@ class CrudListResponse extends ViewResponse
         return $result;
     }
     
+    // ************************************ Paginator ****************************************
     protected function getPaginatorEntry(string $type, string $title, ?string $link = null)
     {
         $result = new \StdClass();
@@ -378,11 +401,23 @@ class CrudListResponse extends ViewResponse
         ]));
     }
     
-    protected function getPage(int $offset)
+    /**
+     * Returns ths page nummer for the page that belongs to offset $offset
+     * 
+     * @param int $offset
+     * @return number
+     */
+    protected function getPage(int $offset): int
     {
         return intval($offset/$this->limit)+1;    
     }
 
+    /**
+     * Checks if there is a "prev" page in this paginator (It is not if the current page is
+     * the first page)
+     * 
+     * @param unknown $result
+     */
     protected function checkForPrevPage(&$result)
     {
         if ($this->offset > 0) {
@@ -390,6 +425,12 @@ class CrudListResponse extends ViewResponse
         }
     }
     
+    /**
+     * Checks if there is a "next" page in this pagintor (It is not if the current page ist
+     * teh last one)
+     * 
+     * @param unknown $result
+     */
     protected function checkForNextPage(&$result)
     {
         if (($this->offset+$this->limit) < $this->engine->getElementCount($this->filter)) {
@@ -397,6 +438,14 @@ class CrudListResponse extends ViewResponse
         }
     }
     
+    /**
+     * Adds an paginator entry for a page to $result. If $page is the current page
+     * it marks it so
+     * 
+     * @param array $result
+     * @param int $current
+     * @param int $page
+     */
     protected function addPageEntry(array &$result, int $current, int $page)
     {
         if ($page == $current) {
@@ -406,6 +455,12 @@ class CrudListResponse extends ViewResponse
         }        
     }
     
+    /**
+     * Inserts a paginator without an ellipse (less than 12 entries)
+     * 
+     * @param int $page_count
+     * @return array
+     */
     protected function getNoEllipsePaginator(int $page_count): array
     {
         $result = [];
@@ -418,6 +473,15 @@ class CrudListResponse extends ViewResponse
         return $result;
     }
     
+    /**
+     * Adds pagintor entries to $result for pages from $from till $till and marks them as 
+     * current if it is so
+     * 
+     * @param unknown $result
+     * @param int $current
+     * @param int $from
+     * @param int $till
+     */
     protected function addPageEntries(&$result, int $current, int $from, int $till)
     {
         for ($i=$from;$i<=$till;$i++) {
@@ -425,11 +489,22 @@ class CrudListResponse extends ViewResponse
         }
     }
     
+    /**
+     * Adds an ellipse entry to $result
+     * 
+     * @param array $result
+     */
     protected function addEllipse(array &$result)
     {
         $result[] = $this->getPaginatorEntry('ellipse', '...');    
     }
     
+    /**
+     * Creates a paginator with at least one ellipse (more than 11 pages)
+     * 
+     * @param int $page_count
+     * @return array
+     */
     protected function getEllipsePaginator(int $page_count): array
     {
          $result = [];
@@ -452,11 +527,22 @@ class CrudListResponse extends ViewResponse
          return $result;
     }
     
+    /**
+     * Returns the number of pages of this paginator
+     * 
+     * @return number
+     */
     public function getPageCount()
     {
         return intval(ceil($this->engine->getElementCount($this->filter)/$this->limit));
     }
     
+    /**
+     * Depending on how many pages there are insert no paginator, a paginator without ellipse or
+     * a paginator with at least one ellipse
+     * 
+     * @return array
+     */
     protected function getPaginator(): array
     {
         $page_count = $this->getPageCount();
@@ -469,6 +555,11 @@ class CrudListResponse extends ViewResponse
         return $this->getEllipsePaginator($page_count);
     }
     
+    protected function getSearch(): array
+    {
+        return [];    
+    }
+    
     protected function getViewElements(): array
     {
         return [
@@ -476,6 +567,7 @@ class CrudListResponse extends ViewResponse
             'columns'=>$this->getColumns(),
             'datarows'=>$this->getDataRows(),
             'filters'=>$this->getFilters(),
+            'search'=>$this->getSearch(),
             'pagination'=>$this->getPaginator()
         ];
     }
