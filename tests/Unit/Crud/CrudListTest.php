@@ -96,29 +96,29 @@ test('CRUD list unlinked displays entries', function()
     expect(getListResponse())->toContain('<td class="id">2</td>');
     expect(getListResponse())->toContain('<td class="value">D</td>');
     expect(getListResponse())->toContain('<td class="value">3</td>');
-});
+})->group('crud','data');
 
 test('CRUD list linked displays entries', function()
 {
     expect(getListResponse())->toContain('<a href="http://example.com/A">A</a>');
     expect(getListResponse())->toContain('<a href="http://example.com/B">B</a>');
     expect(getListResponse())->toContain('<a href="http://example.com/C">C</a>');
-});
+})->group('crud','data');
 
 test('CRUD list displays show link', function()
 {
     expect(getListResponse())->toContain('<td class="link show"><a href="'.route('test.show',['id'=>1]).'">show</a>');
-});
+})->group('crud','data');
 
 test('CRUD list displays edit link', function()
 {
     expect(getListResponse())->toContain('<td class="link edit"><a href="'.route('test.edit',['id'=>1]).'">edit</a>');
-});
+})->group('crud','data');
 
 test('CRUD list displays delete link', function()
 {
     expect(getListResponse())->toContain('<td class="link delete"><a href="'.route('test.delete',['id'=>1]).'">delete</a>');
-});
+})->group('crud','data');
 
 test('CRUD doesnt display links when features disbaled', function()
 {
@@ -126,12 +126,12 @@ test('CRUD doesnt display links when features disbaled', function()
     expect($response)->not->toContain('<a class="show" href="'.route('test.show',['id'=>1]).'">show</a>');
     expect($response)->not->toContain('<a class="edit" href="'.route('test.edit',['id'=>1]).'">edit</a>');
     expect($response)->not->toContain('<a class="delete" href="'.route('test.delete',['id'=>1]).'">delete</a>');
-});
+})->group('crud','data');
 
 test('CRUD list handles empty data set', function() {
   $response = getListResponse(data: []);
   expect($response)->toContain('No entries.');
-});
+})->group('crud','data');
 
 // ***************************  Paginator *****************************************
 test('CRUD list getPageCount', function($entries, $expect)
@@ -156,42 +156,42 @@ test('CRUD list displays right paginator links when first', function()
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10]).'">2</a>');    
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10]).'">next</a>');
     expect($response)->not->toContain('prev</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays right paginator links when order set', function()
 {
     $response = getListResponse(order: 'item');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10,'order'=>'item']).'">2</a>');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10,'order'=>'item']).'">next</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays right paginator links when filter set', function()
 {
     $response = getListResponse(filter: 'itemfilter');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10,'filter'=>'itemfilter']).'">2</a>');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10,'filter'=>'itemfilter']).'">next</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays right paginator links when order and filter set', function()
 {
     $response = getListResponse(order: 'item', filter: 'itemfilter');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10,'order'=>'item','filter'=>'itemfilter']).'">2</a>');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10,'order'=>'item','filter'=>'itemfilter']).'">next</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays right paginator links when last', function()
 {
     $response = getListResponse(30,null,20);
     expect($response)->not->toContain('next</a>');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10]).'">prev</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays right paginator links when middle', function()
 {
     $response = getListResponse(30,null,10);
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>20,'limit'=>10]).'">next</a>');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>0,'limit'=>10]).'">prev</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays right paginator count', function()
 {
@@ -202,26 +202,26 @@ test('CRUD list displays right paginator count', function()
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>10,'limit'=>10]).'">2</a');
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>20,'limit'=>10]).'">3</a');
     expect($response)->not->toContain('<a href="'.route('test.list',['offset'=>30,'limit'=>10]).'">1</a');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays no paginator when too few entries', function()
 {
     $response = getListResponse(5);
     expect($response)->not->toContain('<div class="paginator">');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays paginator for one additional entry', function()
 {
     $response = getListResponse(31);
     expect($response)->toContain(route('test.list',['offset'=>30,'limit'=>10]));
-});
+})->group('crud','paginator');
 
 test('CRUD list displays 11 pages-paginator without ellipse with offset 0', function()
 {
     $response = getListResponse(105,null,0);
     expect($response)->not->toContain('<a href="'.route('test.list',['offset'=>0,'limit'=>10]).">1</a>");
     expect($response)->toContain('<a href="'.route('test.list',['offset'=>100,'limit'=>10]).'">11</a>');
-});
+})->group('crud','paginator');
 
 test('CRUD list displays 12 pages-paginator with ellipse with offset 0', function()
 {
@@ -231,7 +231,7 @@ test('CRUD list displays 12 pages-paginator with ellipse with offset 0', functio
     expect($response)->not->toContain(route('test.list',['offset'=>100,'limit'=>10]));
     expect($response)->toContain('<div class="ellipse">...</div>');
     expect($response)->toContain(route('test.list',['offset'=>120,'limit'=>10]));
-});
+})->group('crud','paginator');
 
 test('CRUD list displays 12 pages-paginator with ellipse with offset 120', function()
 {
@@ -242,7 +242,7 @@ test('CRUD list displays 12 pages-paginator with ellipse with offset 120', funct
     expect($response)->toContain(route('test.list',['offset'=>110,'limit'=>10]));
     expect($response)->toContain('<div class="ellipse">...</div>');
     expect($response)->not->toContain(route('test.list',['offset'=>120,'limit'=>10]));
-});
+})->group('crud','paginator');
 
 
 test('CRUD list displays paginator with ellipse with offset 0', function() 
@@ -253,7 +253,7 @@ test('CRUD list displays paginator with ellipse with offset 0', function()
    expect($response)->not->toContain(route('test.list',['offset'=>100,'limit'=>10]));
    expect($response)->toContain('<div class="ellipse">...</div>');
    expect($response)->toContain(route('test.list',['offset'=>990,'limit'=>10]));
-});
+})->group('crud','paginator');
 
 test('CRUD list displays paginator with ellipse with offset 50', function()
 {
@@ -263,7 +263,7 @@ test('CRUD list displays paginator with ellipse with offset 50', function()
     expect($response)->not->toContain(route('test.list',['offset'=>110,'limit'=>10]));
     expect($response)->toContain('<div class="ellipse">...</div>');
     expect($response)->toContain(route('test.list',['offset'=>990,'limit'=>10]));
-});
+})->group('crud','paginator');
 
 test('CRUD list displays paginator with ellipse with offset 500', function()
 {
@@ -275,7 +275,7 @@ test('CRUD list displays paginator with ellipse with offset 500', function()
     expect($response)->toContain('<div class="ellipse">...</div>');
     expect($response)->not->toContain(route('test.list',['offset'=>560,'limit'=>10]));
     expect($response)->toContain(route('test.list',['offset'=>990,'limit'=>10]));
-});
+})->group('crud','paginator');
 
 // ============================ sorting ================================
 test('CRUD list displays order columns', function()
@@ -284,7 +284,7 @@ test('CRUD list displays order columns', function()
     expect($response)->toContain('<td><a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'">id</a></td>');
     expect($response)->toContain('<td><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a></td>');
     expect($response)->toContain('<td>payload</td>');
-});
+})->group('crud','sorting');
 
 test('CRUD list displays order columns with offset', function()
 {
@@ -292,24 +292,24 @@ test('CRUD list displays order columns with offset', function()
     expect($response)->toContain('<td><a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'>id</a></td>');
     expect($response)->toContain('<td><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'>item</a></td>');
     expect($response)->toContain('<td>payload</td>');
-});
+})->group('crud','sorting');
 
 test('CRUD list respects ordering asc and marks column', function()
 {
    $response = getListResponse(10, null, 0, 10, 'item');
    expect($response)->toContain('<a class="active_asc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!item']).">item</a>");
-});
+})->group('crud','sorting');
 
 test('CRUD list respects ordering desc and marks column', function()
 {
     $response = getListResponse(10, null, 0, 10, '!item');
     expect($response)->toContain('<a class="active_desc" href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).">item</a>");
-});
+})->group('crud','sorting');
 
 test('CRUD list fails when sort field is not sortable', function()
 {
     getListResponse(10, null, 0, 10, 'payload');    
-})->throws(FieldNotSortableException::class);
+})->group('crud','sorting')->throws(FieldNotSortableException::class);
 
 // ============================ filter =================================
 test('CRUD list offsers filters', function()
@@ -318,35 +318,35 @@ test('CRUD list offsers filters', function()
     expect($response)
         ->toContain('<select class="filter" name="filter" id="filter">')
         ->toContain('<option value="none">(no filter)</option>');
-});
+})->group('crud','filter');
 
 test('CRUD list offsers fixed filters', function()
 {
     $response = getListResponse();
     expect($response)
     ->toContain('<option value="itemfilter">Item filter</option>');
-});
+})->group('crud','filter');
 
 test('CRUD list offsers user filters', function()
 {
     $response = getListResponse();
     expect($response)
     ->toContain('<option value="userfilter">User defined filter...</option>');
-});
+})->group('crud','filter');
 
 test('CRUD list doesnt offser user filters when disabled', function()
 {
     $response = getListResponse(features: []);    
     expect($response)
     ->not->toContain('<option value="userfilter">User defined filter...</option>');
-});
+})->group('crud','filter');
 
 test('CRUD list doesnt offers filters when all empty', function() 
 {
     $response = getListResponse(features: [], filters:[]);
     expect($response)
     ->not->toContain('<select class="filter" name="filter" id="filter">');    
-});
+})->group('crud','filter');
 
 test('CRUD list does offer at least user filters when fixed are empty', function()
 {
@@ -354,33 +354,48 @@ test('CRUD list does offer at least user filters when fixed are empty', function
     expect($response)
     ->toContain('<select class="filter" name="filter" id="filter">')
     ->toContain('<option value="userfilter">User defined filter...</option>');
-});
+})->group('crud','filter');
 
 test('CRUD list does offer a search field', function() 
 {
     $response = getListResponse();
     expect($response)->toContain('<div class="element"><input name="search" id="search"');
-});
+})->group('crud','filter');
 
 // ================================== Group actions =======================================
 test('CRUD list provides group action select fields', function() {
     $response = getListResponse();
     expect($response)->toContain('<td class="group"><input type="checkbox" name="group[]" value="1"></td>');
-});
+})->group('crud','group');
 
 test('CRUD list provides group action buttons', function() {
     $response = getListResponse();
     expect($response)->toContain('<input type="button" value="edit" class="group">');
-});
+})->group('crud','group');
 
 test('CRUD list hides group action select field when no group actions', function()
 {
     $response = getListResponse(group_actions: []);
     expect($response)->not->toContain('<td class="group"><input type="checkbox" name="group[]" value="1"></td>');
-});
+})->group('crud','group');
 
 test('CRUD list hides group action buttons when no group actions', function()
 {
     $response = getListResponse(group_actions: []);
-    expect($response)->not->toContain('<input type="button" value="edit" class="group">');    
-});
+    expect($response)->not->toContain('<input type="button" value="edit" class="grop">');    
+})->group('crud','group');
+
+// =============================== Search Field ==============================================
+test('CRUD list provides a search field when search is on', function()
+{
+   $response = getListResponse();
+   expect($response)->toContain('<input name="search_str" class="search_str">');
+   expect($response)->toContain('<button id="search" class="search">');
+})->group('crud','search');
+
+test('CRUD list doesnt provide a search field when search is off', function()
+{
+    $response = getListResponse();
+    expect($response)->not->toContain('<input name="search_str" class="search_str">');
+    expect($response)->not->toContain('<button id="search" class="search">');    
+})->group('crud','search');;
