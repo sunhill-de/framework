@@ -379,6 +379,15 @@ class CrudListResponse extends ViewResponse
         return $result;
     }
     
+    /**
+     * Creates the search field or return an empty array when there is no search field
+     * @return array
+     */
+    protected function getSearch(): array
+    {
+        return [];
+    }
+        
     // ************************************ Paginator ****************************************
     protected function getPaginatorEntry(string $type, string $title, ?string $link = null)
     {
@@ -553,11 +562,6 @@ class CrudListResponse extends ViewResponse
             return $this->getNoEllipsePaginator($page_count);
         }
         return $this->getEllipsePaginator($page_count);
-    }
-    
-    protected function getSearch(): array
-    {
-        return [];    
     }
     
     protected function getViewElements(): array
