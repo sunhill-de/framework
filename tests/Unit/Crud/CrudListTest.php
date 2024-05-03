@@ -45,11 +45,11 @@ function getListResponse($entries = 30, $features = null, $offset = 0, $limit = 
     App::setLocale('en');
     $engine = \Mockery::mock(AbstractCrudEngine::class);
     $engine->shouldReceive('getElementCount')->atLeast(1)->andReturns($entries);
-    $engine->shouldReceive('isSortable')->once()->with('id')->andReturn(true);
-    $engine->shouldReceive('isSortable')->once()->with('item')->andReturns(true);
-    $engine->shouldReceive('isSortable')->once()->with('payload')->andReturns(false);
+    $engine->shouldReceive('isSortable')->atLeast(1)->with('id')->andReturn(true);
+    $engine->shouldReceive('isSortable')->atLeast(1)->with('item')->andReturns(true);
+    $engine->shouldReceive('isSortable')->atLeast(1)->with('payload')->andReturns(false);
     $engine->shouldReceive('getFilters')->once()->andReturns(is_null($filters)?['itemfilter'=>'Item filter','payloadfilter'=>'Payload filter']:$filters);
-    $engine->shouldReceive('getListEntries')->once()->with($offset, $limit, $order, $order_dir, $filter)->andReturns($data);
+    $engine->shouldReceive('getListEntries')->once()->with($offset, $limit, (strpos($order,'!')!==false)?substr($order,1):$order, $order_dir, $filter)->andReturns($data);
     $engine->shouldReceive('getColumns')->atLeast(1)->andReturn(['id'=>'id','item'=>'value','payload'=>'value']);
     $engine->shouldReceive('getColumnTitle')->once()->with('id')->andReturn('id');
     $engine->shouldReceive('getColumnTitle')->once()->with('item')->andReturn('item');
@@ -282,28 +282,29 @@ test('CRUD list displays order columns', function()
 {
     $response = getListResponse();
     expect($response)->toContain('<td class="id active_asc"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'">id</a></td>');
-    expect($response)->toContain('<td class="data"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a></td>');
-    expect($response)->toContain('<td class="data">payload</td>');
+    expect($response)->toContain('<td class="value"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a></td>');
+    expect($response)->toContain('<td class="value">payload</td>');
 })->group('crud','sorting');
 
 test('CRUD list displays order columns with offset', function()
 {
+    // "<td class="id active_asc"><a href="http://localhost/test/list/0/10/!id">id</a></td>"
     $response = getListResponse(entries: 30,offset: 20);
     expect($response)->toContain('<td class="id active_asc"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!id']).'">id</a></td>');
-    expect($response)->toContain('<td class="data"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a></td>');
-    expect($response)->toContain('<td class="data">payload</td>');
+    expect($response)->toContain('<td class="value"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a></td>');
+    expect($response)->toContain('<td class="value">payload</td>');
 })->group('crud','sorting');
 
 test('CRUD list respects ordering asc and marks column', function()
 {
    $response = getListResponse(order: 'item');
-   expect($response)->toContain('<td class="data active_asc"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!item']).'">item</a>');
+   expect($response)->toContain('<td class="value active_asc"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'!item']).'">item</a>');
 })->group('crud','sorting');
 
 test('CRUD list respects ordering desc and marks column', function()
 {
     $response = getListResponse(order: '!item', order_dir:'desc');
-    expect($response)->toContain('<td class="data active_desc"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a>');
+    expect($response)->toContain('<td class="value active_desc"><a href="'.route('test.list',['offset'=>0,'limit'=>10,'order'=>'item']).'">item</a>');
 })->group('crud','sorting');
 
 test('CRUD list fails when sort field is not sortable', function()

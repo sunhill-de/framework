@@ -284,12 +284,20 @@ class CrudListResponse extends ViewResponse
         return $this->createSortLink($column);
     }
     
+    private function getOrderColumn()
+    {
+        if (empty($this->order)) {
+            return 'id';
+        }
+        return $this->order;
+    }
+    
     private function getSortLink(string $column)
     {
         if (!$this->engine->isSortable($column)) {
             return;
         }
-        if ($this->order == $column) {
+        if ($this->getOrderColumn() == $column) {
             return $this->getReverseSortLink($column);
         }
         return $this->createSortLink($column);
@@ -317,7 +325,7 @@ class CrudListResponse extends ViewResponse
     
     protected function getDataColumn(string $column, string $type): \StdClass
     {
-        if ($column == $this->order) {
+        if ($column == $this->getOrderColumn()) {
             return $this->getColumn($column, $this->engine->getColumnTitle($column), $type.' active_'.$this->order_dir, $this->getSortLink($column));            
         } else {
             return $this->getColumn($column, $this->engine->getColumnTitle($column), $type, $this->getSortLink($column));
