@@ -42,6 +42,12 @@ function getListResponse($entries = 30, $features = null, $offset = 0, $limit = 
             getStdClass(['id'=>10, 'item'=>'J','payload'=>7]),
         ];
     }
+    if (is_null($group_actions)) {
+        $group_actions = [
+            'edit'=>'Edit',
+            'delete'=>'Delete'
+        ];
+    }
     App::setLocale('en');
     $engine = \Mockery::mock(AbstractCrudEngine::class);
     $engine->shouldReceive('getElementCount')->atLeast(1)->andReturns($entries);
@@ -81,9 +87,8 @@ function getListResponse($entries = 30, $features = null, $offset = 0, $limit = 
     }
     if (!is_null($group_actions)) {
         $result = [];
-        foreach ($group_actions as $action) {
-            $method = 'test.group'.$action;
-            $result[$action] = $method;
+        foreach ($group_actions as $action => $title) {
+            $result[$action] = $title;
         }
         $test->setGroupActions($result);
     }
@@ -360,20 +365,6 @@ test('CRUD list does offer at least user filters when fixed are empty', function
     ->toContain('<option value="userfilter">User defined filter...</option>');
 })->group('crud','filter');
 
-test('CRUD list does offer a search field', function() 
-{
-    $response = getListResponse();
-    expect($response)->toContain('<div class="element"><input name="search" id="search"');
-    expect($response)->toContain('<button id="submit_search">search</button>');
-})->group('crud','filter');
-
-test('CRUD list hides a search field when disabled', function()
-{
-    $response = getListResponse(features:[]);
-    expect($response)->not->toContain('<div class="element"><input name="search" id="search"');
-    expect($response)->not->toContain('<button id="submit_search">search</button>');
-})->group('crud','filter');
-
 // ================================== Group actions =======================================
 test('CRUD list provides group action select fields', function() {
     $response = getListResponse();
@@ -382,7 +373,7 @@ test('CRUD list provides group action select fields', function() {
 
 test('CRUD list provides group action buttons', function() {
     $response = getListResponse();
-    expect($response)->toContain('<input type="button" value="edit" class="group">');
+    expect($response)->toContain('<button id="edit" class="group">Edit</button>');
 })->group('crud','group');
 
 test('CRUD list hides group action select field when no group actions', function()
@@ -394,20 +385,20 @@ test('CRUD list hides group action select field when no group actions', function
 test('CRUD list hides group action buttons when no group actions', function()
 {
     $response = getListResponse(group_actions: []);
-    expect($response)->not->toContain('<input type="button" value="edit" class="grop">');    
+    expect($response)->not->toContain('<button id="edit" class="group">Edit</button>');    
 })->group('crud','group');
 
 // =============================== Search Field ==============================================
 test('CRUD list provides a search field when search is on', function()
 {
    $response = getListResponse();
-   expect($response)->toContain('<input name="search_str" class="search_str">');
-   expect($response)->toContain('<button id="search" class="search">');
+   expect($response)->toContain('<input name="search_str" id="search_str">');
+   expect($response)->toContain('<button id="submit_search" class="search">');
 })->group('crud','search');
 
 test('CRUD list doesnt provide a search field when search is off', function()
 {
-    $response = getListResponse();
-    expect($response)->not->toContain('<input name="search_str" class="search_str">');
-    expect($response)->not->toContain('<button id="search" class="search">');    
+    $response = getListResponse(features:[]);
+    expect($response)->not->toContain('<input name="search_str" id="search_str">');
+    expect($response)->not->toContain('<button id="submit_search" class="search">');    
 })->group('crud','search');;

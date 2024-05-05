@@ -13,7 +13,7 @@
 </div>
 @endif
 @if($search)
-<div class="element"><input name="search" id="search"><button id="submit_search">{{ __('search') }}</button></div>
+<div class="element"><input name="search_str" id="search_str"><button id="submit_search" class="search">{{ __('search') }}</button></div>
 @endif
 </div>
 <table class="data">
@@ -25,7 +25,13 @@
 @forelse ($datarows as $row)
  <tr>
 @foreach ($row as $column)
+@switch($column->class)
+@case('group')
+  <td class="group"><input type="checkbox" name="group[]" value="{{$column->data}}"></td>
+@break  
+@default
   <td class="{{ $column->class}}"><x-optional_link :entry="$column->data"/></td>
+@endswitch  
 @endforeach
  </tr>
 @empty
@@ -33,6 +39,15 @@
 @endforelse
 </table>
 <div class="table-foot">
+@if(!empty($group_actions))
+ <div class="element">
+  <div class="group_actions">
+@foreach($group_actions as $action)
+   <div class="element"><button id="{{ $action->id }}" class="group">{{ $action->title }}</button></div>
+@endforeach  
+  </div>
+ </div>
+@endif
 </div>
 @if(!empty($pagination))
 <nav role="paginator">

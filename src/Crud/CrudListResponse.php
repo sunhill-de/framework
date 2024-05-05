@@ -375,6 +375,11 @@ class CrudListResponse extends ViewResponse
         return $link;
     }
     
+    protected function getID($row)
+    {
+        return $row->id;
+    }
+    
     protected function getDataRows()
     {
         $columns = $this->engine->getColumns();
@@ -383,13 +388,19 @@ class CrudListResponse extends ViewResponse
         $result = [];
         foreach ($data as $data_row) {
             $row = [];
+            $id = $this->getID($data_row);
+            if (!empty($this->group_actions)) {
+                $column_data = new \StdClass();
+                $column_data->data = $id;
+                $column_data->class = 'group';
+                $column_data->value = $id;
+                $row[] = $column_data;
+            }
             foreach ($data_row as $key => $value) {
                 $column_data = new \StdClass();
                 $column_data->data = $value;
                 $column_data->id = $key;
-                if (($column_data->class = $columns[$key]) == 'id') {
-                    $id = $value; 
-                }
+                $column_data->class = $columns[$key];
                 $row[] = $column_data;
             }
             if ($this->enable_show) {
@@ -624,6 +635,18 @@ class CrudListResponse extends ViewResponse
         return $this->getEllipsePaginator($page_count);
     }
     
+    protected function getGroupActions()
+    {
+        $result = [];
+        foreach ($this->group_actions as $id => $title) {
+            $entry = new \StdClass();
+            $entry->id = $id;
+            $entry->title = $title;
+            $result[] = $entry;
+        }
+        return $result;    
+    }
+    
     protected function getViewElements(): array
     {
         return [
@@ -632,7 +655,8 @@ class CrudListResponse extends ViewResponse
             'datarows'=>$this->getDataRows(),
             'filters'=>$this->getFilters(),
             'search'=>$this->getSearch(),
-            'pagination'=>$this->getPaginator()
+            'pagination'=>$this->getPaginator(),
+            'group_actions'=>$this->getGroupActions()
         ];
     }
 }
