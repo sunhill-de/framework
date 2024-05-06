@@ -38,10 +38,21 @@ class PluginManager
     
     /**
      * Just returns all installed plugins
+     * 
      * @return array
      */
     public function getPlugins()
     {
         return $this->plugins;
+    }
+    
+    /**
+     * Sets the plugins. Mostly for testing purposes
+     * 
+     * @param array $plugin
+     */
+    public function setPlugins(array $plugin)
+    {
+        $this->plugins = $plugins;
     }
 }
