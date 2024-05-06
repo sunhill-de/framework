@@ -5,6 +5,7 @@ namespace Sunhill\Framework\Tests\Unit\Plugins;
 use Sunhill\Framework\Tests\TestCase;
 use IsaEken\PluginSystem\Enums\PluginState;
 use Sunhill\Framework\Plugins\PluginQuery;
+use Sunhill\Framework\Tests\Unit\Plugins\TestPlugins\TestPluginA;
 
 uses(TestCase::class);
 
@@ -30,10 +31,10 @@ function getModule($name, $author, $version, $features, $state)
 function getTestModules(): array
 {
     $result = [];
-    $result[] = getModule('testModuleA','Debby Debugger','0.0.1',['featureA','featureB'],PluginState::Disabled);
-    $result[] = getModule('testModuleB','Anton Author','0.1.1',['featureA'],PluginState::Enabled);
-    $result[] = getModule('Another Module','Carl Coder','1.0.1',['featureC'],PluginState::Enabled);
-    $result[] = getModule('And just another','Debby Debugger','1.0.1',['featureA','featureB'],PluginState::Outdated);
+    $result[] = getModule('testModuleA','Debby Debugger','0.0.1',['featureA','featureB'],'disabled');
+    $result[] = getModule('testModuleB','Anton Author','0.1.1',['featureA'],'enabled');
+    $result[] = getModule('Another Module','Carl Coder','1.0.1',['featureC'],'enabled');
+    $result[] = getModule('And just another','Debby Debugger','1.0.1',['featureA','featureB'],'outdated');
     
     return $result;
 }

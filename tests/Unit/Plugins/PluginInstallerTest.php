@@ -3,12 +3,12 @@
 namespace Sunhill\Framework\Tests\Unit\Plugins;
 
 use Sunhill\Framework\Tests\TestCase;
-use Sunhill\Framework\Tests\Unit\Plugins\TestPlugins\TestPluginInstaller;
 use Sunhill\Framework\Plugins\Plugin;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Sunhill\Framework\Plugins\Exceptions\PluginRootDirDoesntExistException;
 use Sunhill\Framework\Plugins\Exceptions\FileNotFoundException;
+use Sunhill\Framework\Tests\Unit\Plugins\Testplugins\TestPluginInstaller;
 
 uses(TestCase::class);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sunhill\Framework\Tests\Unit\Plugins\TestPlugins;
+namespace Sunhill\Framework\Tests\Unit\Plugins\Testplugins;
 
 use Sunhill\Framework\Plugins\PluginInstaller;
 

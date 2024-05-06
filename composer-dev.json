@@ -31,20 +31,13 @@
                         "options" : {
                                 "symlink" : true
                         }
-                },{
-                        "type" : "path",
-                        "url" : "../plugin-system",
-                        "options" : {
-                                "symlink" : true
-                        }
                 }                
                 ],
      "require" : {
                 "laravel/framework" : "^10.0",
                 "sunhill/basic": "*",
                 "sunhill/pm":"*",
-                "sunhill/properties": "*",
-                "isaeken/plugin-system":"*"
+                "sunhill/properties": "*"
      },
      "require-dev" : {
         "orchestra/testbench" : "^8.5",

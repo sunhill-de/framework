@@ -2,11 +2,126 @@
 
 namespace Sunhill\Framework\Plugins;
 
-use IsaEken;
 use Sunhill\Framework\Plugins\Exceptions\WrongInstallersFormatException;
 
-class Plugin extends IsaEken\PluginSystem\Plugin
+class Plugin 
 {
+    
+    /**
+     * The name of this plugin. Must be unique
+     * 
+     * @var string
+     */
+    protected $name = 'no name';
+    
+    /**
+     * Setter for $name
+     * 
+     * @param string $name
+     * @return self
+     */
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+    
+    /**
+     * Getter for name
+     * 
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;    
+    }
+    
+    /**
+     * Author of this plugin
+     * 
+     * @var string
+     */
+    protected $autor = 'no author';
+    
+    /**
+     * Setter for $author
+     * 
+     * @param string $author
+     * @return self
+     */
+    public function setAuthor(string $author): self
+    {
+        $this->author = $author;
+        return $this;
+    }
+    
+    /**
+     * Getter for $author
+     * 
+     * @return string
+     */
+    public function getAuthor(): string
+    {
+        return $this->author;    
+    }
+    
+    /**
+     * The version of this plugin
+     * 
+     * @var string
+     */
+    protected $version = '0.0.0';
+    
+    /**
+     * Setter for $version
+     * 
+     * @param string $version
+     * @return self
+     */
+    public function setVersion(string $version): self
+    {
+        $this->version = $version;
+        return $this;
+    }
+    
+    /**
+     * Getter for version
+     * 
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+    
+    /**
+     * The state of this plugin
+     * 
+     * @var string
+     */
+    protected $state = 'enabled';
+    
+    /**
+     * Setter for state
+     * 
+     * @param string $state
+     * @return self
+     */
+    public function setState(string $state): self
+    {
+        $this->state = $state;
+        return $this;
+    }
+    
+    /**
+     * Getter for state
+     * 
+     * @return string
+     */
+    public function getState(): string
+    {
+       return $this->state; 
+    }
     
     /**
      * Array of strings that stores the features of this plugin
@@ -91,6 +206,16 @@ class Plugin extends IsaEken\PluginSystem\Plugin
                throw new WrongInstallersFormatException("The given installer is not a PluginInstaller"); 
             }
         }
+    }
+    
+    public function setup()
+    {
+        
+    }
+    
+    public function boot()
+    {
+        
     }
     
     public function install()

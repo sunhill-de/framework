@@ -32,14 +32,7 @@ class PluginQuery extends ArrayQuery
             case 'version':
                 return $entry->getVersion();
             case 'state':
-                switch ($entry->getState()) {
-                    case PluginState::Enabled:
-                        return 'enabled';
-                    case PluginState::Disabled:
-                        return 'disabled';
-                    case PluginState::Outdated:
-                        return 'outdated';
-                }
+                return $entry->getState();
         }
     }
     
