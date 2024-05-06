@@ -36,4 +36,12 @@ class PluginManager
         
     }
     
+    /**
+     * Just returns all installed plugins
+     * @return array
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
+    }
 }
