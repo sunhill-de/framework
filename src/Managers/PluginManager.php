@@ -7,6 +7,7 @@ use Sunhill\Framework\Managers\Exceptions\InvalidPlugInException;
 use Sunhill\Framework\Plugins\Plugin;
 use Sunhill\Framework\Plugins\PluginQuery;
 use Sunhill\Framework\Managers\Exceptions\UnmatchedPluginDependencyException;
+use Sunhill\Framework\Managers\Exceptions\PluginNotFoundException;
 
 class PluginManager 
 {
@@ -130,6 +131,19 @@ class PluginManager
     public function getPlugins()
     {
         return $this->plugins;
+    }
+    
+    /**
+     * Returns the plugin with the name $name or raises an exception when it doesn't exist
+     * @param string $name
+     * @return Plugin
+     */
+    public function getPlugin(string $name): Plugin
+    {
+        if (!isset($this->plugins[$name])) {
+            throw new PluginNotFoundException("The plugin '$name' was not found");
+        }
+        return $this->plugins[$name];
     }
     
     /**

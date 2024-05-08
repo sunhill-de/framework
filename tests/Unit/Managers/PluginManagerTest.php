@@ -8,6 +8,7 @@ use Sunhill\Framework\Plugins\Plugin;
 use Sunhill\Framework\Managers\Exceptions\InvalidPlugInException;
 use Sunhill\Framework\Plugins\PluginQuery;
 use Sunhill\Framework\Managers\Exceptions\UnmatchedPluginDependencyException;
+use Sunhill\Framework\Managers\Exceptions\PluginNotFoundException;
 
 uses(TestCase::class);
 
@@ -20,7 +21,14 @@ test('Read plugin directory', function()
     sort($plugins);
     expect($plugins)->toBe(['ManagerPluginA','ManagerPluginB']);
     expect(is_a($list['ManagerPluginA'],Plugin::class))->toBe(true);
+    expect($test->getPlugin('ManagerPluginB')->getName())->toBe('ManagerPluginB');
 });
+
+it('fails when accessing an unknown plugin', function()
+{
+    $test = new PluginManager();
+    $test->getPlugin('unknown');  
+})->throws(PluginNotFoundException::class);
 
 it('fails when reading wrong named plugin', function()
 {
